@@ -1,0 +1,21 @@
+{
+    "testId": "51efc507-e7df-4b51-bcff-262b11ce5af3",
+    "name": "Brandy",
+    "version": "1.0.0",
+    "manifestVersion": 2,
+    "requirements": {
+        "apps": [
+            {
+                "name": "Express",
+                "apiVersion": 1
+            }
+        ]
+    },
+    "entryPoints": [
+        {
+            "type": "panel",
+            "id": "panel1",
+            "main": "index.html"
+        }
+    ]
+}
