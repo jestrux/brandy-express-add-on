@@ -92,7 +92,7 @@ export default function Login({ onLogin = () => {} }) {
 				<div className="pt-3">
 					<div className="pt-3 mt-2 ">
 						<button
-							className="relative overflow-hidden hoverable border border-primary bg-primary text-white block w-full text-center flex center-center gap-2 rounded-full"
+							className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
 							style={{
 								height: "40px",
 								fontSize: "0.82rem",

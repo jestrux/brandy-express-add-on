@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import SettingsIcon from "@spectrum-icons/workflow/Settings";
 import SearchIcon from "@spectrum-icons/workflow/Search";
+import AddIcon from "@spectrum-icons/workflow/Add";
 import UserIcon from "@spectrum-icons/workflow/User";
 import {
 	MenuTrigger,
@@ -234,7 +235,23 @@ export default function Home({ onLogout = () => {} }) {
 					</MenuTrigger>
 				</div>
 
-				<div className="mt-2 relative">
+				<div className="mt-3">
+					<button
+						className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
+						style={{
+							height: "40px",
+							fontSize: "0.82rem",
+							// pointerEvents: loading ? "none" : "",
+						}}
+						// onClick={handleClick}
+					>
+						<AddIcon size="S" />
+						<span>Add to brand</span>
+						{/* {loading && <Loader fillParent small />} */}
+					</button>
+				</div>
+
+				<div className="my-1 relative">
 					<div className="absolute mt-2 ml-3 left-0 inset-y-0 opacity-50 flex items-center">
 						<SearchIcon size="S" />
 					</div>
@@ -270,9 +287,9 @@ export default function Home({ onLogout = () => {} }) {
 			)}
 
 			{Object.entries(assets).map(([group, assets], index) => (
-				<div className="p-3" key={`${group}${index}`}>
-					<div className="">
-						<h3 style={{ lineHeight: 1 }}>{group}</h3>
+				<div className="px-3 pt-1 pb-2" key={`${group}${index}`}>
+					<div className="mb-2">
+						<h3 style={{ lineHeight: 0 }}>{group}</h3>
 					</div>
 
 					<div

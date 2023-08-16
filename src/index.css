@@ -148,6 +148,9 @@ button {
 .bg-black {
 	background: black;
 }
+.bg-dark {
+	background: #222222;
+}
 .bg-black12 {
 	background: rgba(0, 0, 0, 0.02);
 }
@@ -698,6 +701,9 @@ img.inset-0 {
 }
 .border-black {
 	border-color: black;
+}
+.border-dark {
+	border-color: #222;
 }
 .border-black12 {
 	border-color: rgba(0, 0, 0, 0.08);
