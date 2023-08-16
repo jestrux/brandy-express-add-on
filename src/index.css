@@ -338,6 +338,9 @@ button {
 .absolute {
 	position: absolute;
 }
+.sticky {
+	position: sticky;
+}
 .fixed {
 	position: fixed;
 }
@@ -375,11 +378,13 @@ img.inset-0 {
 }
 
 .inset-0,
+.inset-y-0,
 .top-0 {
 	top: 0;
 }
 
 .inset-0,
+.inset-y-0,
 .bottom-0 {
 	bottom: 0;
 }
