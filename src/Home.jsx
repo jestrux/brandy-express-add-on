@@ -21,7 +21,7 @@ import FontEditorComponent from "./components/FontEditorComponent";
 import Loader from "./components/Loader";
 import useFetch from "./hooks/useFetch";
 import useLocalStorageState from "./hooks/useLocalStorageState";
-import SaveAsset from "./SaveAsset";
+import AddAsset from "./AddAsset";
 import AddBrand from "./AddBrand";
 
 function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
@@ -132,11 +132,9 @@ export default function Home({ onLogout = () => {} }) {
 
 		get(
 			`/assets/${brand}?type=image,font,pallete${
-				searchQuery?.length && "&searchQuery=" + searchQuery
+				searchQuery?.length ? "&searchQuery=" + searchQuery : ""
 			}`
 		).then((res) => {
-			window.assetCollections = [];
-
 			if (!res.data?.length) return;
 
 			const assets = res.data.reduce((agg, asset) => {
@@ -152,13 +150,7 @@ export default function Home({ onLogout = () => {} }) {
 				// 		return agg;
 				// }
 
-				if (!agg[asset.group.name]) {
-					window.assetCollections.push({
-						value: asset.group._id,
-						label: asset.group.name,
-					});
-					agg[asset.group.name] = [];
-				}
+				if (!agg[asset.group.name]) agg[asset.group.name] = [];
 
 				agg[asset.group.name].push(asset);
 
@@ -173,7 +165,7 @@ export default function Home({ onLogout = () => {} }) {
 		return <FontEditorComponent onGoBack={() => setPage(null)} />;
 
 	if (page == "Add Asset")
-		return <SaveAsset onGoBack={() => setPage(null)} />;
+		return <AddAsset brand={brand} onGoBack={() => setPage(null)} />;
 
 	return (
 		<div>
@@ -225,12 +217,6 @@ export default function Home({ onLogout = () => {} }) {
 							style={{
 								height: "40px",
 								fontSize: "0.82rem",
-								...(loading || !Object.keys(assets)?.length
-									? {
-											pointerEvents: "none",
-											opacity: 0.5,
-									  }
-									: {}),
 							}}
 							onClick={() => setPage("Add Asset")}
 						>
@@ -275,7 +261,7 @@ export default function Home({ onLogout = () => {} }) {
 				(loading || !Object.keys(assets).length) &&
 				(loading ? (
 					<div className="mt-2 p-3 flex flex-col gap-2 center-center">
-						{loading && <Loader />}
+						<Loader />
 						<span>Loading assets...</span>
 					</div>
 				) : (

@@ -3,11 +3,12 @@ import RefreshIcon from "@spectrum-icons/workflow/Refresh";
 import useDataSchema from "./hooks/useDataSchema";
 import ComponentFields from "./components/ComponentFields";
 import Loader from "./components/Loader";
-import useFetch from "./hooks/useFetch";
+import useFetch, { BASE_URL } from "./hooks/useFetch";
 import AlertBar from "./components/AlertBar";
 import { ActionButton } from "@adobe/react-spectrum";
 
 export default function SaveAsset({
+	brand,
 	onRegister = () => {},
 	onGoBack = () => {},
 }) {
@@ -16,6 +17,11 @@ export default function SaveAsset({
 	const [loadingAsset, setLoadingAsset] = useState(false);
 	const { post, loading, error } = useFetch();
 	const [data, setData] = useDataSchema({});
+	const {
+		fetcher: fetchCollections,
+		loading: fetchingCollections,
+		data: collections,
+	} = useFetch();
 
 	const showPremiumContentError = async () => {
 		const { ButtonType } = window.AddOnSdk.constants;
@@ -43,6 +49,7 @@ export default function SaveAsset({
 	};
 
 	useEffect(() => {
+		fetchCollections(`${BASE_URL}/organisations/${brand}/group`);
 		loadAsset();
 	}, []);
 
@@ -134,49 +141,62 @@ export default function SaveAsset({
 				<div className="px-2 flex flex-col gap-2">
 					<h1 className="leading-1 text-xl">Add asset to Brandy</h1>
 
-					<div>
-						<div>
-							<ComponentFields
-								schema={{
-									name: {
-										label: "Asset name",
-										noBorder: true,
-										noMargin: true,
-										meta: {
-											placeholder:
-												"E.g. Instagram banner",
-											className: "mb-2",
-										},
-									},
-									collection: {
-										noBorder: true,
-										noMargin: true,
-										type: "choice",
-										choices: window.assetCollections ?? [],
-										meta: {
-											placeholder: "Choose collection",
-										},
-									},
-								}}
-								onChange={setData}
-								data={data}
-							/>
+					{fetchingCollections ? (
+						<div className="mt-2 p-3 flex flex-col gap-2 center-center">
+							<Loader />
+							<span>Loading collections...</span>
 						</div>
+					) : (
+						<div>
+							<div>
+								<ComponentFields
+									schema={{
+										name: {
+											label: "Asset name",
+											noBorder: true,
+											noMargin: true,
+											meta: {
+												placeholder:
+													"E.g. Instagram banner",
+												className: "mb-2",
+											},
+										},
+										collection: {
+											noBorder: true,
+											noMargin: true,
+											type: "choice",
+											choices: collections?.map(
+												({ _id, name }) => ({
+													value: _id,
+													label: name,
+												})
+											),
+											meta: {
+												placeholder:
+													"Choose collection",
+											},
+										},
+									}}
+									onChange={setData}
+									data={data}
+								/>
+							</div>
 
-						<button
-							className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
-							style={{
-								marginTop: "2.5rem",
-								height: "40px",
-								fontSize: "0.82rem",
-								pointerEvents: loading ? "none" : "",
-							}}
-							onClick={handleClick}
-						>
-							Save asset
-							{loading && <Loader fillParent small />}
-						</button>
-					</div>
+							<button
+								className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
+								style={{
+									marginTop: "2.5rem",
+									height: "40px",
+									fontSize: "0.82rem",
+									pointerEvents: loading ? "none" : "",
+								}}
+								onClick={handleClick}
+							>
+								Save asset
+								{loading && <Loader fillParent small />}
+							</button>
+						</div>
+					)}
 				</div>
 			</div>
 		</>
