@@ -6,7 +6,7 @@ import useFetch from "./hooks/useFetch";
 import AlertBar from "./components/AlertBar";
 import useLocalStorageState from "./hooks/useLocalStorageState";
 
-export default function Login({
+export default function Register({
 	onRegister = () => {},
 	onLogin = () => {},
 	onGoBack = () => {},
@@ -17,7 +17,7 @@ export default function Login({
 	const handleClick = async () => {
 		const res = await post("/auth/login", data);
 		console.log("Res: ", res);
-		onLogin({
+		onRegister({
 			...res.user,
 			token: res.token,
 		});
@@ -51,19 +51,45 @@ export default function Login({
 				</button>
 			</div>
 
-			<img className="w-full p-3" src="img/banner.png" alt="" />
-
-			<div className="mt-2 px-3" style={{ marginTop: "-0.5rem" }}>
+			<div className="mt-3 pt-2 px-3">
 				<div className="px-2 flex flex-col gap-2">
-					<h1 className="leading-1 text-xl">Login into Brandy</h1>
+					<h1 className="leading-1 text-xl">
+						Get started with Brandy
+					</h1>
 
-					{error && <AlertBar>Wrong email or passsword</AlertBar>}
+					{error && <AlertBar>Whoops! Something went wrong</AlertBar>}
 
 					<div>
 						<div>
 							<ComponentFields
 								schema={{
+									firstName: {
+										noBorder: true,
+										noMargin: true,
+										meta: {
+											placeholder: "E.g. John",
+											className: "mb-2",
+										},
+									},
+									lastName: {
+										noBorder: true,
+										noMargin: true,
+										meta: {
+											placeholder: "E.g. Doe",
+											className: "mb-2",
+										},
+									},
+									company: {
+										label: "Company name",
+										noBorder: true,
+										noMargin: true,
+										meta: {
+											placeholder: "E.g. Apple",
+											className: "mb-2",
+										},
+									},
 									email: {
+										label: "Work email",
 										noBorder: true,
 										noMargin: true,
 										meta: {
@@ -85,7 +111,7 @@ export default function Login({
 						</div>
 
 						<div className="pt-3">
-							<div className="pt-3 mt-2 ">
+							<div className="pt-3 mt-3">
 								<button
 									className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
 									style={{
@@ -95,19 +121,19 @@ export default function Login({
 									}}
 									onClick={handleClick}
 								>
-									Login
+									Create account
 									{loading && <Loader fillParent small />}
 								</button>
 
-								<div className="pt-2 mt-3 flex flex-col center-center gap-2">
+								<div className="pt-1 mt-3 flex flex-col center-center gap-2">
 									<span className="opacity-65 text-base">
-										Don't have a Brandy account?
+										Already have a Brandy account?
 									</span>
 									<button
 										className="hoverable bg-transparent border border-transparent font-medium"
-										onClick={onRegister}
+										onClick={onLogin}
 									>
-										Get started
+										Login
 									</button>
 								</div>
 							</div>

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import SettingsIcon from "@spectrum-icons/workflow/Settings";
+import UserIcon from "@spectrum-icons/workflow/User";
+import RefreshIcon from "@spectrum-icons/workflow/Refresh";
 import SearchIcon from "@spectrum-icons/workflow/Search";
 import AddIcon from "@spectrum-icons/workflow/Add";
-import UserIcon from "@spectrum-icons/workflow/User";
 import {
 	MenuTrigger,
 	ActionButton,
@@ -21,6 +21,7 @@ import FontEditorComponent from "./components/FontEditorComponent";
 import Loader from "./components/Loader";
 import useFetch from "./hooks/useFetch";
 import useLocalStorageState from "./hooks/useLocalStorageState";
+import SaveAsset from "./SaveAsset";
 
 function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 	const [loading, setLoading] = useState(false);
@@ -113,32 +114,42 @@ export default function Home({ onLogout = () => {} }) {
 	const { get, loading } = useFetch();
 	const [brand, setBrand] = useState(user.organisation?.[0]?._id);
 	const [assets, setAssets] = useState({});
-	const [currentComponent, setCurrentComponent] = useState();
-	const component = useRef();
+	const [page, setPage] = useState();
 
 	useEffect(() => {
 		if (!brand) return;
-		fetchAssets(brand);
+		fetchAssets();
 	}, [brand]);
 
-	const fetchAssets = (brand, searchQuery) => {
+	const fetchAssets = (searchQuery) => {
 		setAssets({});
 
-		get(`/assets/${brand}?type=image,font,pallete`).then((res) => {
+		get(
+			`/assets/${brand}?type=image,font,pallete${
+				searchQuery?.length && "&searchQuery=" + searchQuery
+			}`
+		).then((res) => {
+			window.assetCollections = [];
 			const assets = res.data.reduce((agg, asset) => {
-				if (searchQuery?.length) {
-					if (
-						asset.name
-							.toLowerCase()
-							.replaceAll(" ", "")
-							.indexOf(
-								searchQuery.toLowerCase().replaceAll(" ", "")
-							) == -1
-					)
-						return agg;
-				}
+				// if (searchQuery?.length) {
+				// 	if (
+				// 		asset.name
+				// 			.toLowerCase()
+				// 			.replaceAll(" ", "")
+				// 			.indexOf(
+				// 				searchQuery.toLowerCase().replaceAll(" ", "")
+				// 			) == -1
+				// 	)
+				// 		return agg;
+				// }
 
-				if (!agg[asset.group.name]) agg[asset.group.name] = [];
+				if (!agg[asset.group.name]) {
+					window.assetCollections.push({
+						value: asset.group._id,
+						label: asset.group.name,
+					});
+					agg[asset.group.name] = [];
+				}
 
 				agg[asset.group.name].push(asset);
 
@@ -149,65 +160,17 @@ export default function Home({ onLogout = () => {} }) {
 		});
 	};
 
-	function handleSetCurrentComponent(currentComponent, name = "") {
-		component.current = currentComponent;
-		setCurrentComponent(name);
-	}
+	if (page == "Font")
+		return <FontEditorComponent onGoBack={() => setPage(null)} />;
 
-	if (component.current) {
-		const Component = component.current;
-
-		return (
-			<>
-				<div className="px-2 border-b pb-3 flex items-center gap-2">
-					<button
-						className="back-button border hoverable inline-flex center-center cursor-pointer bg-black26 rounded-sm aspect-square"
-						onClick={() => handleSetCurrentComponent(null)}
-						style={{
-							width: "24px",
-							padding: 0,
-							paddingRight: "1px",
-						}}
-					>
-						<svg
-							height="16"
-							viewBox="0 0 24 24"
-							strokeWidth={2.6}
-							stroke="currentColor"
-							fill="none"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M15.75 19.5L8.25 12l7.5-7.5"
-							/>
-						</svg>
-					</button>
-
-					<span
-						className="capitalize font-medium"
-						style={{
-							fontSize: "1rem",
-							lineHeight: "1",
-							fontWeight: "bold",
-							letterSpacing: "-0.03em",
-						}}
-					>
-						{camelCaseToSentenceCase(currentComponent)}
-					</span>
-				</div>
-
-				<Component />
-			</>
-		);
-	}
+	if (page == "Add Asset")
+		return <SaveAsset onGoBack={() => setPage(null)} />;
 
 	return (
 		<div>
 			<div className="sticky top-0 bg-white z-10 border-b pb-3 px-12px">
 				<div className="flex items-center justify-between">
 					<div className="">
-						{/* <h3>Account</h3> */}
 						{user.organisation?.length > 1 && (
 							<Picker
 								items={user.organisation}
@@ -222,17 +185,24 @@ export default function Home({ onLogout = () => {} }) {
 						)}
 					</div>
 
-					<MenuTrigger>
-						<ActionButton isQuiet>
-							<SettingsIcon />
+					<div className="flex items-center">
+						<ActionButton
+							isDisabled={loading}
+							isQuiet
+							onPress={fetchAssets}
+						>
+							<RefreshIcon />
 						</ActionButton>
-						<Menu onAction={(key) => onLogout()}>
-							<Item key="cut">
-								{/* <UserIcon /> */}
-								Logout
-							</Item>
-						</Menu>
-					</MenuTrigger>
+
+						<MenuTrigger>
+							<ActionButton isQuiet>
+								<UserIcon />
+							</ActionButton>
+							<Menu onAction={(key) => onLogout()}>
+								<Item key="cut">Logout</Item>
+							</Menu>
+						</MenuTrigger>
+					</div>
 				</div>
 
 				<div className="mt-3">
@@ -241,13 +211,17 @@ export default function Home({ onLogout = () => {} }) {
 						style={{
 							height: "40px",
 							fontSize: "0.82rem",
-							// pointerEvents: loading ? "none" : "",
+							...(loading || !Object.keys(assets)?.length
+								? {
+										pointerEvents: "none",
+										opacity: 0.5,
+								  }
+								: {}),
 						}}
-						// onClick={handleClick}
+						onClick={() => setPage("Add Asset")}
 					>
 						<AddIcon size="S" />
 						<span>Add to brand</span>
-						{/* {loading && <Loader fillParent small />} */}
 					</button>
 				</div>
 
@@ -258,7 +232,6 @@ export default function Home({ onLogout = () => {} }) {
 
 					<input
 						key={brand}
-						name="q"
 						className="rounded-full mt-2 w-full py-2 border border-dark-gray"
 						type="search"
 						placeholder="Search assets..."
@@ -269,22 +242,27 @@ export default function Home({ onLogout = () => {} }) {
 						onKeyDown={(e) => {
 							if (e.key == "Enter") {
 								e.preventDefault();
-								fetchAssets(brand, e.target.value);
+								fetchAssets(e.target.value);
 							}
 						}}
 						onChange={(e) =>
-							!e.target.value.length ? fetchAssets(brand) : null
+							!e.target.value.length ? fetchAssets() : null
 						}
 					/>
 				</div>
 			</div>
 
-			{loading && (
-				<div className="mt-2 p-3 flex flex-col gap-2 center-center">
-					{loading && <Loader />}
-					<span>Loading your assets...</span>
-				</div>
-			)}
+			{(loading || !Object.keys(assets).length) &&
+				(loading ? (
+					<div className="mt-2 p-3 flex flex-col gap-2 center-center">
+						{loading && <Loader />}
+						<span>Loading assets...</span>
+					</div>
+				) : (
+					<div className="mt-2 p-3 flex flex-col gap-2 center-center">
+						<span>No assets here</span>
+					</div>
+				))}
 
 			{Object.entries(assets).map(([group, assets], index) => (
 				<div className="px-3 pt-1 pb-2" key={`${group}${index}`}>
@@ -342,10 +320,7 @@ export default function Home({ onLogout = () => {} }) {
 									asset={asset}
 									key={`${asset._id}${index}`}
 									onSelectFont={() => {
-										handleSetCurrentComponent(
-											FontEditorComponent,
-											"Font"
-										);
+										setPage("Font");
 										window.selectedFont = asset.name;
 									}}
 								/>

@@ -3,12 +3,13 @@ import { ProgressCircle } from "@adobe/react-spectrum";
 
 const Loader = ({
 	small = false,
+	large = false,
 	fillParent = false,
 	scrimColor = "rgba(255, 255, 255, 0.7)",
 }) => {
 	const loader = (
 		<ProgressCircle
-			size={small ? "S" : "M"}
+			size={small ? "S" : large ? "L" : "M"}
 			aria-label="Loading…"
 			isIndeterminate
 		/>

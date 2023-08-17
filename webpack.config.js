@@ -24,7 +24,10 @@ const DEVELOPMENT_CONFIG = {
             scriptLoading: "module"
         }),
         new CopyWebpackPlugin({
-            patterns: [{ from: "src/*.json", to: "[name][ext]" }]
+            patterns: [
+                { from: "src/*.json", to: "[name][ext]" },
+                { from: "src/img/*", to: "img/[name][ext]" },
+            ]
         })
     ],
     module: {

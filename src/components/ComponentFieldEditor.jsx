@@ -1,6 +1,7 @@
 import React from "react";
 import { camelCaseToSentenceCase } from "../utils";
 import ColorCard from "./ColorCard";
+import Select from "./Select";
 
 const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 	const {
@@ -62,6 +63,7 @@ const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 		"icon",
 		"radio",
 		"tag",
+		"choice",
 		"card",
 		"grid",
 		"image",
@@ -70,7 +72,7 @@ const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 	].includes(type);
 
 	let { className: wrapperClassName, ...otherWrapperProps } = wrapperProps;
-	let { className, ...otherMeta } = meta;
+	let { className, style, ...otherMeta } = meta;
 	let initialValue = value;
 
 	if (type == "date") {
@@ -105,11 +107,10 @@ const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 					className="flex items-center justify-between"
 					style={{
 						marginBottom:
-							isCustomFieldType &&
-							!inline &&
-							type != "boolean" &&
+							// isCustomFieldType &&
+							(!inline || type != "boolean") &&
 							(!optional || value)
-								? "0.4rem"
+								? "0.25rem"
 								: 0,
 					}}
 				>
@@ -141,34 +142,31 @@ const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 						/>
 					)}
 
-					{!isCustomFieldType && (
-						// <form
-						// 	className="w-full"
-						// 	onSubmit={(e) => {
-						// 		e.preventDefault();
-						// 		handleChange(
-						// 			type == "number"
-						// 				? Number(tempValue)
-						// 				: tempValue
-						// 		);
-						// 	}}
-						// >
+					{type == "choice" && (
+						<Select
+							value={value}
+							choices={choices}
+							onChange={handleChange}
+							{...meta}
+						/>
+					)}
 
+					{!isCustomFieldType && (
 						<input
-							className={`m-0 w-full ${
-								type == "range"
-									? "mt-1"
-									: "py-2 px-2 border border-dark-gray rounded-xs"
-							} ${className}`}
+							className={`m-0 w-full px-3 border border-dark-gray rounded-sm ${className}`}
+							style={{
+								height: "40px",
+								lineHeight: 1,
+								border: "2px solid #D5D5D5",
+								appearance: "none",
+								...style,
+							}}
 							type={type}
-							// value={tempValue}
 							defaultValue={initialValue}
 							uxp-quiet="true"
 							{...otherMeta}
-							// onChange={(e) => setTempValue(e.target.value)}
 							onChange={(e) => handleChange(e.target.value)}
 						/>
-						// </form>
 					)}
 				</React.Fragment>
 			)}
