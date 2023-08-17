@@ -7,20 +7,24 @@ import useFetch, { BASE_URL } from "./hooks/useFetch";
 import AlertBar from "./components/AlertBar";
 import { ActionButton } from "@adobe/react-spectrum";
 
-export default function SaveAsset({
+export default function AddAsset({
 	brand,
-	onRegister = () => {},
+	onSave = () => {},
 	onGoBack = () => {},
 }) {
 	const file = useRef(null);
 	const [preview, setPreview] = useState(null);
 	const [loadingAsset, setLoadingAsset] = useState(false);
-	const { post, loading, error } = useFetch();
 	const [data, setData] = useDataSchema({});
 	const {
 		fetcher: fetchCollections,
 		loading: fetchingCollections,
 		data: collections,
+	} = useFetch();
+	const {
+		fetcher: saveAsset,
+		loading: savingAsset,
+		data: newAsset,
 	} = useFetch();
 
 	const showPremiumContentError = async () => {
@@ -44,8 +48,55 @@ export default function SaveAsset({
 		}
 	};
 
-	const handleClick = async () => {
-		console.log("Data: ", data, file.current);
+	const handleSave = async () => {
+		const formData = new FormData();
+		formData.append(
+			"file",
+			file.current,
+			data.name.replaceAll(".png", "").replaceAll(" ", "-").trim() +
+				".png"
+		);
+		// const res = await saveAsset(
+		// 	`${BASE_URL}/groups/${data.collection}/files/image`,
+		// 	{
+		// 		method: "POST",
+		// 		data: formData,
+		// 	}
+		// );
+
+		const res = {
+			index: 0,
+			tags: [],
+			_id: "64de8abfe40c4e27e1f70ab3",
+			name: "Photo 1508739773434 c26b3d09e071",
+			type: "image",
+			adobe_express_id: null,
+			file: "64d61a40b02a35a8739ea478/1692306095452-photo1508739773434c26b3d09e071",
+			metadata: {
+				size: 108543,
+				dimensions: {
+					width: 1080,
+					height: 720,
+				},
+				format: "jpg",
+			},
+			preview:
+				"64d61a40b02a35a8739ea478/1692306095452-photo1508739773434c26b3d09e071-preview",
+			group: "64d61a40b02a35a8739ea478",
+			organisation: "64d61a40b02a35a8739ea473",
+			created_at: "2023-08-17T21:01:51.535Z",
+			updated_at: "2023-08-17T21:01:51.535Z",
+			__v: 0,
+		};
+
+		onSave({
+			...res,
+			group: {
+				_id: res.group,
+				name: collections.find(({ _id }) => _id == data.collection)
+					.name,
+			},
+		});
 	};
 
 	useEffect(() => {
@@ -188,12 +239,12 @@ export default function SaveAsset({
 									marginTop: "2.5rem",
 									height: "40px",
 									fontSize: "0.82rem",
-									pointerEvents: loading ? "none" : "",
+									pointerEvents: savingAsset ? "none" : "",
 								}}
-								onClick={handleClick}
+								onClick={handleSave}
 							>
 								Save asset
-								{loading && <Loader fillParent small />}
+								{savingAsset && <Loader fillParent small />}
 							</button>
 						</div>
 					)}

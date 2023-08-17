@@ -12,16 +12,22 @@ export default function useFetch() {
 		let res;
 		setError(null);
 		setLoading(true);
+		const isFormData = data && typeof data.getAll == "function";
+
 		try {
 			res = await fetch(url, {
 				method,
 				headers: {
 					Accept: "application/json",
-					"Content-Type": "application/json",
+					...(isFormData
+						? {}
+						: { "Content-Type": "application/json" }),
 					Authorization:
 						"Bearer " + getValueFromLocalStorage("authUser")?.token,
 				},
-				...(data ? { body: JSON.stringify(data) } : {}),
+				...(data
+					? { body: isFormData ? data : JSON.stringify(data) }
+					: {}),
 			}).then((res) => res.json());
 			setData(res);
 			setLoading(false);

@@ -165,7 +165,25 @@ export default function Home({ onLogout = () => {} }) {
 		return <FontEditorComponent onGoBack={() => setPage(null)} />;
 
 	if (page == "Add Asset")
-		return <AddAsset brand={brand} onGoBack={() => setPage(null)} />;
+		return (
+			<AddAsset
+				brand={brand}
+				onSave={(asset) => {
+					console.log("Add asset: ", asset);
+					const group = assets[asset.group.name] ?? [];
+
+					setAssets((assets) => {
+						return {
+							...assets,
+							[asset.group.name]: [...group, asset],
+						};
+					});
+
+					setPage(null);
+				}}
+				onGoBack={() => setPage(null)}
+			/>
+		);
 
 	return (
 		<div>
