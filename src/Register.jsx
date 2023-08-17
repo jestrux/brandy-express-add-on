@@ -4,19 +4,17 @@ import ComponentFields from "./components/ComponentFields";
 import Loader from "./components/Loader";
 import useFetch from "./hooks/useFetch";
 import AlertBar from "./components/AlertBar";
-import useLocalStorageState from "./hooks/useLocalStorageState";
 
 export default function Register({
 	onRegister = () => {},
 	onLogin = () => {},
 	onGoBack = () => {},
 }) {
-	const [_, saveUser] = useLocalStorageState("authUser", null);
 	const { post, loading, error } = useFetch();
 	const [data, setData] = useDataSchema({});
-	const handleClick = async () => {
+	const handleRegister = async () => {
+		const registerRes = await post("/auth/register", data);
 		const res = await post("/auth/login", data);
-		console.log("Res: ", res);
 		onRegister({
 			...res.user,
 			token: res.token,
@@ -63,7 +61,8 @@ export default function Register({
 						<div>
 							<ComponentFields
 								schema={{
-									firstName: {
+									first_name: {
+										label: "First name",
 										noBorder: true,
 										noMargin: true,
 										meta: {
@@ -71,7 +70,8 @@ export default function Register({
 											className: "mb-2",
 										},
 									},
-									lastName: {
+									last_name: {
+										label: "Last name",
 										noBorder: true,
 										noMargin: true,
 										meta: {
@@ -79,7 +79,7 @@ export default function Register({
 											className: "mb-2",
 										},
 									},
-									company: {
+									company_name: {
 										label: "Company name",
 										noBorder: true,
 										noMargin: true,
@@ -119,7 +119,7 @@ export default function Register({
 										fontSize: "0.82rem",
 										pointerEvents: loading ? "none" : "",
 									}}
-									onClick={handleClick}
+									onClick={handleRegister}
 								>
 									Create account
 									{loading && <Loader fillParent small />}

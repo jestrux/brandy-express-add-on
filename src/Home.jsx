@@ -22,6 +22,7 @@ import Loader from "./components/Loader";
 import useFetch from "./hooks/useFetch";
 import useLocalStorageState from "./hooks/useLocalStorageState";
 import SaveAsset from "./SaveAsset";
+import AddBrand from "./AddBrand";
 
 function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 	const [loading, setLoading] = useState(false);
@@ -110,7 +111,7 @@ function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 }
 
 export default function Home({ onLogout = () => {} }) {
-	const [user] = useLocalStorageState("authUser");
+	const [user, saveUser] = useLocalStorageState("authUser");
 	const { get, loading } = useFetch();
 	const [brand, setBrand] = useState(user.organisation?.[0]?._id);
 	const [assets, setAssets] = useState({});
@@ -121,6 +122,11 @@ export default function Home({ onLogout = () => {} }) {
 		fetchAssets();
 	}, [brand]);
 
+	const handleSaveBrand = (b) => {
+		setBrand(b._id);
+		saveUser({ ...user, organisation: [b] });
+	};
+
 	const fetchAssets = (searchQuery) => {
 		setAssets({});
 
@@ -130,6 +136,9 @@ export default function Home({ onLogout = () => {} }) {
 			}`
 		).then((res) => {
 			window.assetCollections = [];
+
+			if (!res.data?.length) return;
+
 			const assets = res.data.reduce((agg, asset) => {
 				// if (searchQuery?.length) {
 				// 	if (
@@ -171,7 +180,7 @@ export default function Home({ onLogout = () => {} }) {
 			<div className="sticky top-0 bg-white z-10 border-b pb-3 px-12px">
 				<div className="flex items-center justify-between">
 					<div className="">
-						{user.organisation?.length > 1 && (
+						{brand ? (
 							<Picker
 								items={user.organisation}
 								aria-label="Choose brand"
@@ -182,17 +191,21 @@ export default function Home({ onLogout = () => {} }) {
 									<Item key={item._id}>{item.name}</Item>
 								)}
 							</Picker>
+						) : (
+							<h1>Add a brand</h1>
 						)}
 					</div>
 
 					<div className="flex items-center">
-						<ActionButton
-							isDisabled={loading}
-							isQuiet
-							onPress={fetchAssets}
-						>
-							<RefreshIcon />
-						</ActionButton>
+						{brand && (
+							<ActionButton
+								isDisabled={loading}
+								isQuiet
+								onPress={fetchAssets}
+							>
+								<RefreshIcon />
+							</ActionButton>
+						)}
 
 						<MenuTrigger>
 							<ActionButton isQuiet>
@@ -205,54 +218,61 @@ export default function Home({ onLogout = () => {} }) {
 					</div>
 				</div>
 
-				<div className="mt-3">
-					<button
-						className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
-						style={{
-							height: "40px",
-							fontSize: "0.82rem",
-							...(loading || !Object.keys(assets)?.length
-								? {
-										pointerEvents: "none",
-										opacity: 0.5,
-								  }
-								: {}),
-						}}
-						onClick={() => setPage("Add Asset")}
-					>
-						<AddIcon size="S" />
-						<span>Add to brand</span>
-					</button>
-				</div>
+				{brand && (
+					<div className="mt-3 mb-1">
+						<button
+							className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
+							style={{
+								height: "40px",
+								fontSize: "0.82rem",
+								...(loading || !Object.keys(assets)?.length
+									? {
+											pointerEvents: "none",
+											opacity: 0.5,
+									  }
+									: {}),
+							}}
+							onClick={() => setPage("Add Asset")}
+						>
+							<AddIcon size="S" />
+							<span>Add to brand</span>
+						</button>
 
-				<div className="my-1 relative">
-					<div className="absolute mt-2 ml-3 left-0 inset-y-0 opacity-50 flex items-center">
-						<SearchIcon size="S" />
+						<div className="mt-1 relative">
+							<div className="absolute mt-2 ml-3 left-0 inset-y-0 opacity-50 flex items-center">
+								<SearchIcon size="S" />
+							</div>
+
+							<input
+								key={brand}
+								className="rounded-full mt-2 w-full py-2 border border-dark-gray"
+								type="search"
+								placeholder="Search assets..."
+								style={{
+									height: "34px",
+									paddingLeft: "36px",
+								}}
+								onKeyDown={(e) => {
+									if (e.key == "Enter") {
+										e.preventDefault();
+										fetchAssets(e.target.value);
+									}
+								}}
+								onChange={(e) =>
+									!e.target.value.length
+										? fetchAssets()
+										: null
+								}
+							/>
+						</div>
 					</div>
-
-					<input
-						key={brand}
-						className="rounded-full mt-2 w-full py-2 border border-dark-gray"
-						type="search"
-						placeholder="Search assets..."
-						style={{
-							height: "34px",
-							paddingLeft: "36px",
-						}}
-						onKeyDown={(e) => {
-							if (e.key == "Enter") {
-								e.preventDefault();
-								fetchAssets(e.target.value);
-							}
-						}}
-						onChange={(e) =>
-							!e.target.value.length ? fetchAssets() : null
-						}
-					/>
-				</div>
+				)}
 			</div>
 
-			{(loading || !Object.keys(assets).length) &&
+			{!brand && <AddBrand onSave={handleSaveBrand} />}
+
+			{brand &&
+				(loading || !Object.keys(assets).length) &&
 				(loading ? (
 					<div className="mt-2 p-3 flex flex-col gap-2 center-center">
 						{loading && <Loader />}

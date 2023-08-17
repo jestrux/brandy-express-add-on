@@ -2,6 +2,7 @@ import React from "react";
 import { camelCaseToSentenceCase } from "../utils";
 import ColorCard from "./ColorCard";
 import Select from "./Select";
+import Toggle from "./Toggle";
 
 const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 	const {
