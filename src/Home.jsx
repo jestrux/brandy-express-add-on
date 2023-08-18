@@ -123,9 +123,15 @@ export default function Home({ onLogout = () => {} }) {
 		fetchAssets();
 	}, [brand]);
 
+	const handleAddBrand = () => {
+		if (user.stripe_subscription_type != "paid") return setPage("upgrade");
+
+		setPage("Add Brand");
+	};
+
 	const handleSaveBrand = (b) => {
 		setBrand(b._id);
-		saveUser({ ...user, organisation: [b] });
+		saveUser({ ...user, organisation: [...(user.organisation || []), b] });
 	};
 
 	const fetchAssets = (searchQuery) => {
@@ -198,7 +204,44 @@ export default function Home({ onLogout = () => {} }) {
 					setPage(null);
 				}}
 				onGoBack={() => setPage(null)}
+				onUpgrade={() => setPage("upgrade")}
 			/>
+		);
+	}
+
+	if (page == "Add Brand") {
+		return (
+			<div>
+				<div className="px-2 border-b pb-3 flex items-center justify-between gap-2">
+					<button
+						className="back-button border hoverable inline-flex center-center cursor-pointer bg-black26 rounded-sm aspect-square"
+						onClick={() => setPage(null)}
+						style={{
+							width: "24px",
+							padding: 0,
+							paddingRight: "1px",
+						}}
+					>
+						<svg
+							height="16"
+							viewBox="0 0 24 24"
+							strokeWidth={2.6}
+							stroke="currentColor"
+							fill="none"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								d="M15.75 19.5L8.25 12l7.5-7.5"
+							/>
+						</svg>
+					</button>
+				</div>
+
+				<h1 className="leading-1 text-xl">Add new brand</h1>
+
+				<AddBrand onSave={handleSaveBrand} />
+			</div>
 		);
 	}
 
@@ -209,10 +252,17 @@ export default function Home({ onLogout = () => {} }) {
 					<div className="">
 						{brand ? (
 							<Picker
-								items={user.organisation}
+								items={[
+									...user.organisation,
+									{ _id: "new", name: "Add new brand" },
+								]}
 								aria-label="Choose brand"
 								selectedKey={brand}
-								onSelectionChange={setBrand}
+								onSelectionChange={(value) => {
+									if (value == "new") return handleAddBrand();
+
+									setBrand(value);
+								}}
 							>
 								{(item) => (
 									<Item key={item._id}>{item.name}</Item>
@@ -265,7 +315,7 @@ export default function Home({ onLogout = () => {} }) {
 							onClick={() => setPage("Add Asset")}
 						>
 							<AddIcon size="S" />
-							<span>Add to brand</span>
+							<span>Add design to brand</span>
 						</button>
 
 						<div className="mt-1 relative">

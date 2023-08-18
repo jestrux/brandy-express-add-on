@@ -12,8 +12,12 @@ export default function AddAsset({
 	brand,
 	onSave = () => {},
 	onGoBack = () => {},
+	onUpgrade = () => {},
 }) {
 	const formRef = useRef(null);
+	const [user] = useLocalStorageState("authUser");
+	const { get: fetchAllAssets, loading: fetchingAllAssets } = useFetch();
+
 	const file = useRef(null);
 	const [preview, setPreview] = useState(null);
 	const [loadingAsset, setLoadingAsset] = useState(false);
@@ -28,6 +32,16 @@ export default function AddAsset({
 		loading: savingAsset,
 		data: newAsset,
 	} = useFetch();
+
+	const showAssetTooLargeError = async (size) => {
+		await window.AddOnSdk.app.showModalDialog({
+			variant: "error",
+			title: `File too large (${size}Mbs)`,
+			description: "Maximum asset size is 1.02Mbs",
+		});
+
+		onGoBack();
+	};
 
 	const showPremiumContentError = async () => {
 		const { ButtonType } = window.AddOnSdk.constants;
@@ -52,6 +66,14 @@ export default function AddAsset({
 
 	const handleSave = async () => {
 		if (!formRef.current.validate()) return;
+
+		const allAssetsRes = await fetchAllAssets(`/assets/${brand}`);
+
+		if (
+			allAssetsRes.data?.length >= 20 &&
+			user.stripe_subscription_type != "paid"
+		)
+			return onUpgrade();
 
 		const formData = new FormData();
 		formData.append(
@@ -111,6 +133,10 @@ export default function AddAsset({
 					setData("name", rendition.title);
 
 				if (rendition.blob) {
+					const size = rendition.blob.size / 1000000;
+					if (size > 1.02)
+						return showAssetTooLargeError(size.toFixed(2));
+
 					file.current = rendition.blob;
 					setPreview(URL.createObjectURL(rendition.blob));
 				}
@@ -217,12 +243,17 @@ export default function AddAsset({
 									marginTop: "1.3rem",
 									height: "40px",
 									fontSize: "0.82rem",
-									pointerEvents: savingAsset ? "none" : "",
+									pointerEvents:
+										savingAsset || fetchingAllAssets
+											? "none"
+											: "",
 								}}
 								onClick={handleSave}
 							>
 								Save asset
-								{savingAsset && <Loader fillParent small />}
+								{(savingAsset || fetchingAllAssets) && (
+									<Loader fillParent small />
+								)}
 							</button>
 						</div>
 					)}
