@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import useDataSchema from "./hooks/useDataSchema";
 import ComponentFields from "./components/ComponentFields";
 import Loader from "./components/Loader";
@@ -7,6 +7,7 @@ import AlertBar from "./components/AlertBar";
 import useLocalStorageState from "./hooks/useLocalStorageState";
 
 export default function AddBrand({ onSave = () => {} }) {
+	const formRef = useRef();
 	const [authUser] = useLocalStorageState("authUser", null);
 	const { post, loading, error } = useFetch();
 	const [data, setData] = useDataSchema({
@@ -17,6 +18,8 @@ export default function AddBrand({ onSave = () => {} }) {
 	});
 
 	const handleSave = async () => {
+		if (!formRef.current.validate()) return;
+
 		const res = await post("/organisations", data);
 		onSave(res.data);
 	};
@@ -30,33 +33,25 @@ export default function AddBrand({ onSave = () => {} }) {
 					<div>
 						<div>
 							<ComponentFields
+								ref={formRef}
 								schema={{
 									name: {
-										noBorder: true,
-										noMargin: true,
 										meta: {
 											placeholder: "E.g. Apple",
-											className: "mb-2",
 										},
 									},
 									company_name: {
 										label: "Company name",
-										noBorder: true,
-										noMargin: true,
 										meta: {
 											placeholder: "E.g. Apple",
-											className: "mb-2",
 										},
 									},
 									is_private: {
 										type: "boolean",
 										label: "Private",
-										noBorder: true,
-										noMargin: true,
 										meta: {
 											placeholder:
 												"E.g. john@example.com",
-											className: "mb-2",
 										},
 									},
 								}}
@@ -65,22 +60,19 @@ export default function AddBrand({ onSave = () => {} }) {
 							/>
 						</div>
 
-						<div className="pt-3">
-							<div className="pt-3 mt-3">
-								<button
-									className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
-									style={{
-										height: "40px",
-										fontSize: "0.82rem",
-										pointerEvents: loading ? "none" : "",
-									}}
-									onClick={handleSave}
-								>
-									Create brand
-									{loading && <Loader fillParent small />}
-								</button>
-							</div>
-						</div>
+						<button
+							className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
+							style={{
+								marginTop: "1rem",
+								height: "40px",
+								fontSize: "0.82rem",
+								pointerEvents: loading ? "none" : "",
+							}}
+							onClick={handleSave}
+						>
+							Create brand
+							{loading && <Loader fillParent small />}
+						</button>
 					</div>
 				</div>
 			</div>

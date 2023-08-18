@@ -7,7 +7,12 @@ import Register from "./Register";
 const LandingPage = ({ onLogin = () => {}, onRegister = () => {} }) => {
 	return (
 		<div>
-			<img className="w-full p-3" src="img/banner.png" alt="" />
+			<img
+				style={{ minHeight: "230px" }}
+				className="w-full p-3"
+				src="img/banner.png"
+				alt=""
+			/>
 
 			<div style={{ marginTop: "-0.5rem", padding: "0 1.25rem" }}>
 				<h1 className="leading-1 mb-2 text-xl">

@@ -301,68 +301,113 @@ function ComponentFieldGroup({ field, data, onChange }) {
 	);
 }
 
-function ComponentFields({ schema, data, onChange }) {
-	const fields = schemaToFields(schema, data);
+const ComponentFields = React.forwardRef(
+	({ schema, data, onChange }, forwardedRef) => {
+		const fallbackRef = useRef(null);
+		const ref = forwardedRef || fallbackRef;
+		const [errors, setErrors] = useState();
+		const fields = schemaToFields(schema, data);
+		const validate = (fields) => {
+			const errors = {};
 
-	return (
-		<div className="flex flex-col gap-5">
-			{fields.map((field, index) => {
-				if (typeof field.show == "function" && !field.show(data)) {
-					return null;
-				}
+			fields.forEach(({ __id, value }) => {
+				if (value == undefined || value.toString().length < 1)
+					errors[__id] = "required";
+			});
 
-				if (field.type == "section")
+			setErrors(errors);
+
+			return Object.keys(errors).length < 1;
+		};
+
+		useEffect(() => {
+			ref.current = {
+				validate: () => validate(fields),
+				valid: false,
+			};
+		}, [ref, fields]);
+
+		useEffect(() => {
+			if (errors) validate(fields);
+		}, [data]);
+
+		return (
+			<div className="flex flex-col gap-3">
+				{fields.map((field, index) => {
+					field.noBorder = field.noBorder ?? true;
+					// field.noMargin = field.noMargin ?? true;
+
+					if (typeof field.show == "function" && !field.show(data)) {
+						return null;
+					}
+
+					if (field.type == "section")
+						return (
+							<ComponentFieldSection
+								key={index}
+								rootLevel
+								field={field}
+								data={data[field.__id]}
+								onChange={onChange}
+							/>
+						);
+					else if (field.type == "group")
+						return (
+							<ComponentFieldGroup
+								key={index}
+								field={field}
+								data={data}
+								onChange={onChange}
+							/>
+						);
+
 					return (
-						<ComponentFieldSection
+						<div
 							key={index}
-							rootLevel
-							field={field}
-							data={data[field.__id]}
-							onChange={onChange}
-						/>
-					);
-				else if (field.type == "group")
-					return (
-						<ComponentFieldGroup
-							key={index}
-							field={field}
-							data={data}
-							onChange={onChange}
-						/>
-					);
+							className="relative"
+							style={{
+								marginBottom: field.noMargin ? "-1.05rem" : "",
+							}}
+						>
+							<ComponentFieldEditor
+								field={{ ...field, __data: data }}
+								onChange={onChange}
+							/>
 
-				return (
-					<div
-						key={index}
-						className="relative"
-						style={{
-							marginBottom: field.noMargin ? "-1.05rem" : "",
-						}}
-					>
-						<ComponentFieldEditor
-							field={{ ...field, __data: data }}
-							onChange={onChange}
-						/>
+							{errors?.[field.__id] && (
+								<p
+									className="text-sm"
+									style={{
+										margin: 0,
+										marginTop: "0.2rem",
+										marginBottom: "-0.2rem",
+										color: "red",
+									}}
+								>
+									This field is required
+								</p>
+							)}
 
-						{!field.noBorder && (
-							<div
-								className="border-b absolute"
-								style={{
-									top: "auto",
-									left: "-12px",
-									right: "-12px",
-									// left: "0px",
-									// right: "0px",
-									bottom: "-1rem",
-									opacity: 1,
-								}}
-							></div>
-						)}
-					</div>
-				);
-			})}
-		</div>
-	);
-}
+							{!field.noBorder && (
+								<div
+									className="border-b absolute"
+									style={{
+										top: "auto",
+										left: "-12px",
+										right: "-12px",
+										// left: "0px",
+										// right: "0px",
+										bottom: "-1rem",
+										opacity: 1,
+									}}
+								></div>
+							)}
+						</div>
+					);
+				})}
+			</div>
+		);
+	}
+);
 
 export default ComponentFields;

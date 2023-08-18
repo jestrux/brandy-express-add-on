@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import useDataSchema from "./hooks/useDataSchema";
 import ComponentFields from "./components/ComponentFields";
 import Loader from "./components/Loader";
@@ -10,9 +10,12 @@ export default function Register({
 	onLogin = () => {},
 	onGoBack = () => {},
 }) {
+	const formRef = useRef();
 	const { post, loading, error } = useFetch();
 	const [data, setData] = useDataSchema({});
 	const handleRegister = async () => {
+		if (!formRef.current.validate()) return;
+
 		const registerRes = await post("/auth/register", data);
 		const res = await post("/auth/login", data);
 		onRegister({
@@ -60,47 +63,34 @@ export default function Register({
 					<div>
 						<div>
 							<ComponentFields
+								ref={formRef}
 								schema={{
 									first_name: {
 										label: "First name",
-										noBorder: true,
-										noMargin: true,
 										meta: {
 											placeholder: "E.g. John",
-											className: "mb-2",
 										},
 									},
 									last_name: {
 										label: "Last name",
-										noBorder: true,
-										noMargin: true,
 										meta: {
 											placeholder: "E.g. Doe",
-											className: "mb-2",
 										},
 									},
 									company_name: {
 										label: "Company name",
-										noBorder: true,
-										noMargin: true,
 										meta: {
 											placeholder: "E.g. Apple",
-											className: "mb-2",
 										},
 									},
 									email: {
 										label: "Work email",
-										noBorder: true,
-										noMargin: true,
 										meta: {
 											placeholder:
 												"E.g. john@example.com",
-											className: "mb-2",
 										},
 									},
 									password: {
-										noBorder: true,
-										noMargin: true,
 										type: "password",
 										meta: {},
 									},
@@ -110,33 +100,30 @@ export default function Register({
 							/>
 						</div>
 
-						<div className="pt-3">
-							<div className="pt-3 mt-3">
-								<button
-									className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
-									style={{
-										height: "40px",
-										fontSize: "0.82rem",
-										pointerEvents: loading ? "none" : "",
-									}}
-									onClick={handleRegister}
-								>
-									Create account
-									{loading && <Loader fillParent small />}
-								</button>
+						<button
+							className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
+							style={{
+								marginTop: "1.35rem",
+								height: "40px",
+								fontSize: "0.82rem",
+								pointerEvents: loading ? "none" : "",
+							}}
+							onClick={handleRegister}
+						>
+							Create account
+							{loading && <Loader fillParent small />}
+						</button>
 
-								<div className="pt-1 mt-3 flex flex-col center-center gap-2">
-									<span className="opacity-65 text-base">
-										Already have a Brandy account?
-									</span>
-									<button
-										className="hoverable bg-transparent border border-transparent font-medium"
-										onClick={onLogin}
-									>
-										Login
-									</button>
-								</div>
-							</div>
+						<div className="pt-1 mt-3 flex flex-col center-center gap-2">
+							<span className="opacity-65 text-base">
+								Already have a Brandy account?
+							</span>
+							<button
+								className="hoverable bg-transparent border border-transparent font-medium"
+								onClick={onLogin}
+							>
+								Login
+							</button>
 						</div>
 					</div>
 				</div>

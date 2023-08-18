@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import useDataSchema from "../hooks/useDataSchema";
 import ComponentFields from "./ComponentFields";
 import { addToDocument } from "../utils";
@@ -44,6 +44,7 @@ class FontEditorDrawer {
 }
 
 function FontEditorComponent({ onGoBack = () => {} }) {
+	const formRef = useRef();
 	const [data, updateField] = useDataSchema({
 		text: "Quick brown fox",
 		color: "#000000",
@@ -51,6 +52,8 @@ function FontEditorComponent({ onGoBack = () => {} }) {
 	});
 
 	const handleClick = () => {
+		if (!formRef.current.validate()) return;
+
 		addToDocument(new FontEditorDrawer().draw(data));
 	};
 
@@ -97,6 +100,7 @@ function FontEditorComponent({ onGoBack = () => {} }) {
 			<div className="px-12px mt-1">
 				<div>
 					<ComponentFields
+						ref={formRef}
 						schema={{
 							text: {
 								meta: {
@@ -123,17 +127,17 @@ function FontEditorComponent({ onGoBack = () => {} }) {
 					/>
 				</div>
 
-				<div className="pt-3">
-					<div className="pt-3 mt-2 ">
-						<button
-							className="hoverable border border-primary bg-primary text-white block w-full text-center flex center-center gap-2 rounded-full"
-							style={{ height: "40px", fontSize: "0.82rem" }}
-							onClick={handleClick}
-						>
-							Insert
-						</button>
-					</div>
-				</div>
+				<button
+					className="hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
+					style={{
+						marginTop: "1.25rem",
+						height: "40px",
+						fontSize: "0.82rem",
+					}}
+					onClick={handleClick}
+				>
+					Insert
+				</button>
 			</div>
 		</>
 	);

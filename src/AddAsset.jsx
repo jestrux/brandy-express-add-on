@@ -13,6 +13,7 @@ export default function AddAsset({
 	onSave = () => {},
 	onGoBack = () => {},
 }) {
+	const formRef = useRef(null);
 	const file = useRef(null);
 	const [preview, setPreview] = useState(null);
 	const [loadingAsset, setLoadingAsset] = useState(false);
@@ -50,6 +51,8 @@ export default function AddAsset({
 	};
 
 	const handleSave = async () => {
+		if (!formRef.current.validate()) return;
+
 		const formData = new FormData();
 		formData.append(
 			"file",
@@ -180,20 +183,16 @@ export default function AddAsset({
 						<div>
 							<div>
 								<ComponentFields
+									ref={formRef}
 									schema={{
 										name: {
 											label: "Asset name",
-											noBorder: true,
-											noMargin: true,
 											meta: {
 												placeholder:
 													"E.g. Instagram banner",
-												className: "mb-2",
 											},
 										},
 										collection: {
-											noBorder: true,
-											noMargin: true,
 											type: "choice",
 											choices: collections?.data?.map(
 												({ _id, name }) => ({
@@ -215,7 +214,7 @@ export default function AddAsset({
 							<button
 								className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
 								style={{
-									marginTop: "2.5rem",
+									marginTop: "1.3rem",
 									height: "40px",
 									fontSize: "0.82rem",
 									pointerEvents: savingAsset ? "none" : "",
