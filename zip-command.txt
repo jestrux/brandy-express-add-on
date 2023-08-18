@@ -1,0 +1,1 @@
+zip -r brandy-addon.zip . -x '**/.*' -x '**/__MACOSX' -x '*.DS_Store'
