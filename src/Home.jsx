@@ -186,7 +186,6 @@ export default function Home({ onLogout = () => {} }) {
 			<AddAsset
 				brand={brand}
 				onSave={(asset) => {
-					console.log("Add asset: ", asset);
 					const group = assets[asset.group.name] ?? [];
 
 					setAssets((assets) => {
