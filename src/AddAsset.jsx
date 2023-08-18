@@ -6,6 +6,7 @@ import Loader from "./components/Loader";
 import useFetch, { BASE_URL } from "./hooks/useFetch";
 import AlertBar from "./components/AlertBar";
 import { ActionButton } from "@adobe/react-spectrum";
+import useLocalStorageState from "./hooks/useLocalStorageState";
 
 export default function AddAsset({
 	brand,
@@ -17,7 +18,7 @@ export default function AddAsset({
 	const [loadingAsset, setLoadingAsset] = useState(false);
 	const [data, setData] = useDataSchema({});
 	const {
-		fetcher: fetchCollections,
+		get: fetchCollections,
 		loading: fetchingCollections,
 		data: collections,
 	} = useFetch();
@@ -56,51 +57,29 @@ export default function AddAsset({
 			data.name.replaceAll(".png", "").replaceAll(" ", "-").trim() +
 				".png"
 		);
-		// const res = await saveAsset(
-		// 	`${BASE_URL}/groups/${data.collection}/files/image`,
-		// 	{
-		// 		method: "POST",
-		// 		data: formData,
-		// 	}
-		// );
+		const res = await saveAsset(
+			`${BASE_URL}/v1/groups/${data.collection}/files/image`,
+			{
+				method: "POST",
+				data: formData,
+			}
+		);
 
-		const res = {
-			index: 0,
-			tags: [],
-			_id: "64de8abfe40c4e27e1f70ab3",
-			name: "Photo 1508739773434 c26b3d09e071",
-			type: "image",
-			adobe_express_id: null,
-			file: "64d61a40b02a35a8739ea478/1692306095452-photo1508739773434c26b3d09e071",
-			metadata: {
-				size: 108543,
-				dimensions: {
-					width: 1080,
-					height: 720,
+		if (res.data) {
+			onSave({
+				...res.data,
+				group: {
+					_id: res.data.group,
+					name: collections.data.find(
+						({ _id }) => _id == data.collection
+					).name,
 				},
-				format: "jpg",
-			},
-			preview:
-				"64d61a40b02a35a8739ea478/1692306095452-photo1508739773434c26b3d09e071-preview",
-			group: "64d61a40b02a35a8739ea478",
-			organisation: "64d61a40b02a35a8739ea473",
-			created_at: "2023-08-17T21:01:51.535Z",
-			updated_at: "2023-08-17T21:01:51.535Z",
-			__v: 0,
-		};
-
-		onSave({
-			...res,
-			group: {
-				_id: res.group,
-				name: collections.find(({ _id }) => _id == data.collection)
-					.name,
-			},
-		});
+			});
+		}
 	};
 
 	useEffect(() => {
-		fetchCollections(`${BASE_URL}/organisations/${brand}/group`);
+		fetchCollections(`/organisations/${brand}/group`);
 		loadAsset();
 	}, []);
 
@@ -216,7 +195,7 @@ export default function AddAsset({
 											noBorder: true,
 											noMargin: true,
 											type: "choice",
-											choices: collections?.map(
+											choices: collections?.data?.map(
 												({ _id, name }) => ({
 													value: _id,
 													label: name,
