@@ -181,7 +181,7 @@ export default function Home({ onLogout = () => {} }) {
 		);
 	}
 
-	if (page == "Add Asset")
+	if (page == "Add Asset") {
 		return (
 			<AddAsset
 				brand={brand}
@@ -200,6 +200,7 @@ export default function Home({ onLogout = () => {} }) {
 				onGoBack={() => setPage(null)}
 			/>
 		);
+	}
 
 	return (
 		<div>
