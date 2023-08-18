@@ -23,6 +23,7 @@ import useFetch from "./hooks/useFetch";
 import useLocalStorageState from "./hooks/useLocalStorageState";
 import AddAsset from "./AddAsset";
 import AddBrand from "./AddBrand";
+import Upgrade from "./Upgrade";
 
 function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 	const [loading, setLoading] = useState(false);
@@ -164,6 +165,22 @@ export default function Home({ onLogout = () => {} }) {
 	if (page == "Font")
 		return <FontEditorComponent onGoBack={() => setPage(null)} />;
 
+	if (page == "upgrade") {
+		return (
+			<Upgrade
+				onGoBack={(res) => {
+					setPage(null);
+					if (res?._id) {
+						saveUser({
+							...user,
+							...res,
+						});
+					}
+				}}
+			/>
+		);
+	}
+
 	if (page == "Add Asset")
 		return (
 			<AddAsset
@@ -221,8 +238,17 @@ export default function Home({ onLogout = () => {} }) {
 							<ActionButton isQuiet>
 								<UserIcon />
 							</ActionButton>
-							<Menu onAction={(key) => onLogout()}>
-								<Item key="cut">Logout</Item>
+							<Menu
+								onAction={(key) => {
+									if (key == "logout") return onLogout();
+
+									setPage("upgrade");
+								}}
+							>
+								{user?.stripe_subscription_type == "free" && (
+									<Item key="upgrade">Upgrade to pro</Item>
+								)}
+								<Item key="logout">Logout</Item>
 							</Menu>
 						</MenuTrigger>
 					</div>
