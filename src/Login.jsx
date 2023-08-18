@@ -17,6 +17,17 @@ export default function Login({
 		if (!formRef.current.validate()) return;
 
 		const res = await post("/auth/login", data);
+
+		if (!res?.user?._id) {
+			return window.AddOnSdk.app.showModalDialog({
+				variant: "error",
+				title: "Login failed",
+				description:
+					res.message ||
+					"Please check your credentials and try again",
+			});
+		}
+
 		onLogin({
 			...res.user,
 			token: res.token,

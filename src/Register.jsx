@@ -17,7 +17,19 @@ export default function Register({
 		if (!formRef.current.validate()) return;
 
 		const registerRes = await post("/auth/register", data);
+
+		if (!registerRes.data?._id) {
+			return window.AddOnSdk.app.showModalDialog({
+				variant: "error",
+				title: "Registration failed",
+				description: registerRes.message || "Unkown error occured",
+			});
+		}
+
 		const res = await post("/auth/login", data);
+
+		if (!res?.user?._id) return onLogin();
+
 		onRegister({
 			...res.user,
 			token: res.token,
