@@ -37,7 +37,7 @@ export default function AddAsset({
 		await window.AddOnSdk.app.showModalDialog({
 			variant: "error",
 			title: `File too large (${size}Mbs)`,
-			description: "Maximum asset size is 1.02Mbs",
+			description: "Maximum asset size is 20Mbs",
 		});
 
 		onGoBack();
@@ -134,7 +134,7 @@ export default function AddAsset({
 
 				if (rendition.blob) {
 					const size = rendition.blob.size / 1000000;
-					if (size > 1.02)
+					if (size > 20)
 						return showAssetTooLargeError(size.toFixed(2));
 
 					file.current = rendition.blob;
