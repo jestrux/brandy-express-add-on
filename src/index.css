@@ -1,8 +1,9 @@
 * {
-	/* font-family: adobe-clean, "Source Sans Pro", -apple-system,
+	/* font-family: verdana, sans-serif; */
+	font-family: adobe-clean, "Source Sans Pro", -apple-system,
 		BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Trebuchet MS",
-		"Lucida Grande", sans-serif; */
-	font-family: verdana, sans-serif;
+		"Lucida Grande", sans-serif;
+
 	box-sizing: border-box;
 	/* color: #ebf5f2; */
 	/* color: #1b659f; */
@@ -11,6 +12,12 @@
 	/* color: #f48634; */
 	/* color: #6e490e; */
 	accent-color: #5258e4;
+}
+
+.font-local {
+	font-family: adobe-clean, "Source Sans Pro", -apple-system,
+		BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Trebuchet MS",
+		"Lucida Grande", sans-serif;
 }
 
 input::placeholder {

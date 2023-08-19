@@ -8,7 +8,9 @@ import {
 	ActionButton,
 	Menu,
 	Item,
+	Text,
 	Picker,
+	Section,
 } from "@adobe/react-spectrum";
 import { ToastQueue } from "@react-spectrum/toast";
 import {
@@ -238,7 +240,12 @@ export default function Home({ onLogout = () => {} }) {
 					</button>
 				</div>
 
-				<h1 className="leading-1 text-xl">Add new brand</h1>
+				<div
+					className="px-3"
+					style={{ marginTop: "1.2rem", marginBottom: "-0.5rem" }}
+				>
+					<h1 className="px-2 leading-1 text-xl">Add new brand</h1>
+				</div>
 
 				<AddBrand onSave={handleSaveBrand} />
 			</div>
@@ -252,10 +259,10 @@ export default function Home({ onLogout = () => {} }) {
 					<div className="">
 						{brand ? (
 							<Picker
-								items={[
-									...user.organisation,
-									{ _id: "new", name: "Add new brand" },
-								]}
+								// items={[
+								// 	...user.organisation,
+								// 	{ _id: "new", name: "Add new brand" },
+								// ]}
 								aria-label="Choose brand"
 								selectedKey={brand}
 								onSelectionChange={(value) => {
@@ -264,9 +271,20 @@ export default function Home({ onLogout = () => {} }) {
 									setBrand(value);
 								}}
 							>
-								{(item) => (
+								{user.organisation.map((item) => (
 									<Item key={item._id}>{item.name}</Item>
-								)}
+								))}
+
+								<Section>
+									<Item key="new">
+										<AddIcon width="24px" />
+										<Text>
+											<span className="text-base font-medium font-local">
+												New brand
+											</span>
+										</Text>
+									</Item>
+								</Section>
 							</Picker>
 						) : (
 							<h1>Add a brand</h1>
@@ -296,7 +314,7 @@ export default function Home({ onLogout = () => {} }) {
 								}}
 							>
 								{user?.stripe_subscription_type == "free" && (
-									<Item key="upgrade">Upgrade to pro</Item>
+									<Item key="upgrade">Upgrade</Item>
 								)}
 								<Item key="logout">Logout</Item>
 							</Menu>
