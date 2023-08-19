@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useFetch, { BASE_URL } from "./hooks/useFetch";
 import stripe from "stripe";
 import useLocalStorageState from "./hooks/useLocalStorageState";
@@ -6,27 +6,56 @@ import { ToastQueue } from "@react-spectrum/toast";
 import Loader from "./components/Loader";
 
 export default function Upgrade({ onGoBack = () => {} }) {
-	const [authUser] = useLocalStorageState("authUser", null);
+	const [authUser, setAuthUser] = useLocalStorageState("authUser", null);
 	const [stripeLoading, setStripeLoading] = useState(false);
 	const { get, loading: refreshing } = useFetch();
+	const { get: refreshStripe } = useFetch();
 
-	const handleUpgrade = async () => {
-		const stripey = stripe(
-			process.env.STRIPE_API_KEY
-		);
-		setStripeLoading(true);
-		const session = await stripey.billingPortal.sessions.create({
-			customer: authUser.stripe_customer_id,
-			return_url: BASE_URL + "/users/settings/personal",
+	const showStripeError = async () => {
+		await window.AddOnSdk.app.showModalDialog({
+			variant: "error",
+			title: "Upgrade failed",
+			description:
+				"We couldn't upgrade your account, contact support: ryan@stylebase.ai",
 		});
-		setStripeLoading(false);
-		window.open(session.url, "_blank");
+
+		onGoBack();
+	};
+
+	const handleUpgrade = async (user) => {
+		const stripey = stripe(process.env.STRIPE_API_KEY);
+		setStripeLoading(true);
+		try {
+			const session = await stripey.billingPortal.sessions.create({
+				customer:
+					user?.stripe_customer_id ?? authUser.stripe_customer_id,
+				return_url: BASE_URL + "/users/settings/personal",
+			});
+			setStripeLoading(false);
+			window.open(session.url, "_blank");
+		} catch (error) {
+			if (
+				error?.message.indexOf("No such customer") != -1 &&
+				!user?.stripe_customer_id
+			) {
+				const res = await refreshStripe("/users/me/refresh-stripe");
+				setAuthUser({
+					...authUser,
+					...res.data,
+				});
+
+				return handleUpgrade(res.data);
+			}
+
+			setStripeLoading(false);
+			showStripeError();
+		}
 	};
 
 	const handleRefresh = async () => {
 		const res = await get(`/users/${authUser._id}`);
 		if (res.data.stripe_subscription_type == "paid") {
-			ToastQueue.positive("Upgraded to pro");
+			ToastQueue.positive("Successfully upgraded!");
 			onGoBack(res.data);
 		} else {
 			const { ButtonType } = window.AddOnSdk.constants;
@@ -34,10 +63,10 @@ export default function Upgrade({ onGoBack = () => {} }) {
 				variant: "information",
 				title: "Not upgraded",
 				description:
-					"Make sure you're upgraded to Brandy pro and try again.",
+					"Make sure you're upgraded to a Brandy paid plan and try again.",
 				buttonLabels: {
 					secondary: "Cancel",
-					primary: "Upgrade to pro",
+					primary: "Upgrade",
 				},
 			});
 
@@ -77,12 +106,14 @@ export default function Upgrade({ onGoBack = () => {} }) {
 				{/* <img className="w-full p-3" src="img/banner.png" alt="" /> */}
 
 				<div style={{ marginTop: "1.5rem", padding: "0 1.25rem" }}>
-					<h1 className="leading-1 mb-2 text-xl">Upgrade to pro!</h1>
+					<h1 className="leading-1 mb-2 text-xl">
+						Upgrade to a Brandy paid plan!
+					</h1>
 
 					<div className="leading-loose">
 						<p>
 							Create unlimited assets and private brand spaces
-							with our Pro subscription.
+							with one of our paid subscriptions.
 						</p>
 
 						<ul className="px-4 ml-1">
@@ -108,7 +139,7 @@ export default function Upgrade({ onGoBack = () => {} }) {
 						}}
 						onClick={handleUpgrade}
 					>
-						Upgrade to pro
+						Upgrade
 						{stripeLoading && <Loader small fillParent />}
 					</button>
 
