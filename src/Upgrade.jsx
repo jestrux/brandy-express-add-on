@@ -29,7 +29,8 @@ export default function Upgrade({ onGoBack = () => {} }) {
 			const session = await stripey.billingPortal.sessions.create({
 				customer:
 					user?.stripe_customer_id ?? authUser.stripe_customer_id,
-				return_url: BASE_URL + "/users/settings/personal",
+				// return_url: BASE_URL + "/users/settings/personal",
+				return_url: "https://app.brandyhq.com/users/settings/personal",
 			});
 			setStripeLoading(false);
 			window.open(session.url, "_blank");

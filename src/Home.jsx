@@ -34,14 +34,14 @@ function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 		if (asset.type == "font")
 			loadFont(
 				asset.name,
-				`https://api.brandyhq.com/media/${asset.file}`
+				`https://app.brandyhq.com/media/${asset.file}`
 			);
 	}, []);
 
 	async function handleClick() {
 		if (asset.type == "image") {
 			setLoading(true);
-			await addToDocument(`https://api.brandyhq.com/media/${asset.file}`);
+			await addToDocument(`https://app.brandyhq.com/media/${asset.file}`);
 			setLoading(false);
 		} else if (asset.type == "color") {
 			setLoading(true);
@@ -69,7 +69,7 @@ function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 				{asset.type == "image" && asset.preview && (
 					<img
 						className="p-2 object-contain object-center w-full h-full"
-						src={`https://api.brandyhq.com/media/${asset.preview}`}
+						src={`https://app.brandyhq.com/media/${asset.preview}`}
 						alt=""
 						style={{
 							minWidth: 0,
