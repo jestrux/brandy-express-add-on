@@ -121,7 +121,8 @@ const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 							paddingTop: inline ? "2px" : "",
 						}}
 					>
-						{camelCaseToSentenceCase(label)}
+						{camelCaseToSentenceCase(label)}{" "}
+						{type != "boolean" && "*"}
 					</label>
 
 					{type == "boolean" && (
@@ -158,6 +159,7 @@ const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 							style={{
 								height: "40px",
 								lineHeight: 1,
+								fontSize: "16px",
 								border: "2px solid #D5D5D5",
 								appearance: "none",
 								...style,

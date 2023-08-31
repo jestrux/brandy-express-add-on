@@ -11,6 +11,7 @@ export default function Select({ value, choices = [], onChange, ...props }) {
 				background: `#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23999'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat scroll 96.2% 60%`,
 				backgroundSize: "12px",
 				appearance: "none",
+				fontSize: "16px"
 			}}
 			value={value}
 			onChange={(e) => onChange(e.target.value)}

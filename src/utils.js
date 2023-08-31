@@ -1,7 +1,12 @@
 export const addToDocument = async (url) => {
-	return await fetch(url)
-		.then((response) => response.blob())
-		.then(window.AddOnSdk?.app.document.addImage);
+	const res = await fetch(url, { mode: "no-cors" });
+	if (!res.ok) {
+		console.log("Image fetch error: ", await res.text());
+		throw new Error("Failed to fetch image");
+	}
+
+	const blob = await res.blob();
+	return window.AddOnSdk?.app.document.addImage(blob);
 };
 
 export function camelCaseToSentenceCase(text) {

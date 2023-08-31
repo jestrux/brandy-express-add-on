@@ -61,11 +61,9 @@ export default function AddBrand({ onSave = () => {} }) {
 						</div>
 
 						<button
-							className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
+							className="btn"
 							style={{
 								marginTop: "1rem",
-								height: "40px",
-								fontSize: "0.82rem",
 								pointerEvents: loading ? "none" : "",
 							}}
 							onClick={handleSave}

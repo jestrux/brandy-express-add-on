@@ -77,7 +77,7 @@ export default function Upgrade({ onGoBack = () => {} }) {
 
 	return (
 		<>
-			<div className="px-2 border-b pb-3 flex items-center gap-2">
+			<div className="px-2 border-b pb-3 flex items-center gap-3">
 				<button
 					className="back-button border hoverable inline-flex center-center cursor-pointer bg-black26 rounded-sm aspect-square"
 					onClick={onGoBack}
@@ -85,6 +85,7 @@ export default function Upgrade({ onGoBack = () => {} }) {
 						width: "24px",
 						padding: 0,
 						paddingRight: "1px",
+						marginTop: "2px",
 					}}
 				>
 					<svg
@@ -101,16 +102,14 @@ export default function Upgrade({ onGoBack = () => {} }) {
 						/>
 					</svg>
 				</button>
+
+				<h1 className="leading-0 text-xl">
+					Upgrade to a Brandy paid plan
+				</h1>
 			</div>
 
 			<div>
-				{/* <img className="w-full p-3" src="img/banner.png" alt="" /> */}
-
-				<div style={{ marginTop: "1.5rem", padding: "0 1.25rem" }}>
-					<h1 className="leading-1 mb-2 text-xl">
-						Upgrade to a Brandy paid plan!
-					</h1>
-
+				<div style={{ padding: "0 1.25rem" }}>
 					<div className="leading-loose">
 						<p>
 							Create unlimited assets and private brand spaces
@@ -132,10 +131,8 @@ export default function Upgrade({ onGoBack = () => {} }) {
 					style={{ padding: "0.75rem 1.25rem" }}
 				>
 					<button
-						className="mt-1 relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
+						className="mt-1 btn"
 						style={{
-							height: "40px",
-							fontSize: "0.82rem",
 							pointerEvents: stripeLoading ? "none" : "",
 						}}
 						onClick={handleUpgrade}

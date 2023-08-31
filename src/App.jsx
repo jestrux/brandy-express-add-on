@@ -34,15 +34,7 @@ const LandingPage = ({ onLogin = () => {}, onRegister = () => {} }) => {
 			</div>
 
 			<div className="border-t" style={{ padding: "0.75rem 1.25rem" }}>
-				<button
-					className="mt-1 relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
-					style={{
-						height: "40px",
-						fontSize: "0.82rem",
-						// pointerEvents: loading ? "none" : "",
-					}}
-					onClick={onRegister}
-				>
+				<button className="mt-1 btn" onClick={onRegister}>
 					Get started for free
 				</button>
 

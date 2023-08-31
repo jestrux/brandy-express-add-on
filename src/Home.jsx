@@ -26,6 +26,7 @@ import useLocalStorageState from "./hooks/useLocalStorageState";
 import AddAsset from "./AddAsset";
 import AddBrand from "./AddBrand";
 import Upgrade from "./Upgrade";
+import PageTitle from "./components/PageTitle";
 
 function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 	const [loading, setLoading] = useState(false);
@@ -41,7 +42,14 @@ function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 	async function handleClick() {
 		if (asset.type == "image") {
 			setLoading(true);
-			await addToDocument(`https://app.brandyhq.com/media/${asset.file}`);
+			try {
+				await addToDocument(
+					`https://app.brandyhq.com/media/${asset.file}`
+				);
+			} catch (error) {
+				console.log("Add image error: ", error);
+				ToastQueue.negative("Failed to add image");
+			}
 			setLoading(false);
 		} else if (asset.type == "color") {
 			setLoading(true);
@@ -214,38 +222,10 @@ export default function Home({ onLogout = () => {} }) {
 	if (page == "Add Brand") {
 		return (
 			<div>
-				<div className="px-2 border-b pb-3 flex items-center justify-between gap-2">
-					<button
-						className="back-button border hoverable inline-flex center-center cursor-pointer bg-black26 rounded-sm aspect-square"
-						onClick={() => setPage(null)}
-						style={{
-							width: "24px",
-							padding: 0,
-							paddingRight: "1px",
-						}}
-					>
-						<svg
-							height="16"
-							viewBox="0 0 24 24"
-							strokeWidth={2.6}
-							stroke="currentColor"
-							fill="none"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M15.75 19.5L8.25 12l7.5-7.5"
-							/>
-						</svg>
-					</button>
-				</div>
-
-				<div
-					className="px-3"
-					style={{ marginTop: "1.2rem", marginBottom: "-0.5rem" }}
-				>
-					<h1 className="px-2 leading-1 text-xl">Add new brand</h1>
-				</div>
+				<PageTitle
+					heading="Add new brand"
+					onGoBack={() => setPage(null)}
+				/>
 
 				<AddBrand onSave={handleSaveBrand} />
 			</div>
@@ -325,15 +305,11 @@ export default function Home({ onLogout = () => {} }) {
 				{brand && (
 					<div className="mt-3 mb-1">
 						<button
-							className="relative overflow-hidden hoverable border border-dark bg-dark text-white block w-full text-center flex center-center gap-2 rounded-full"
-							style={{
-								height: "40px",
-								fontSize: "0.82rem",
-							}}
+							className="btn"
 							onClick={() => setPage("Add Asset")}
 						>
 							<AddIcon size="S" />
-							<span>Add design to brand</span>
+							<span>Add design to Brandy</span>
 						</button>
 
 						<div className="mt-1 relative">
@@ -347,6 +323,7 @@ export default function Home({ onLogout = () => {} }) {
 								type="search"
 								placeholder="Search assets..."
 								style={{
+									fontSize: "16px",
 									height: "34px",
 									paddingLeft: "36px",
 								}}
@@ -372,7 +349,7 @@ export default function Home({ onLogout = () => {} }) {
 			{brand &&
 				(loading || !Object.keys(assets).length) &&
 				(loading ? (
-					<div className="mt-2 p-3 flex flex-col gap-2 center-center">
+					<div className="p-3 flex flex-col gap-2 center-center">
 						<Loader />
 						<span>Loading assets...</span>
 					</div>
