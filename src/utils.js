@@ -1,5 +1,5 @@
 export const addToDocument = async (url) => {
-	const res = await fetch(url, { mode: "no-cors" });
+	const res = await fetch(url);
 	if (!res.ok) {
 		console.log("Image fetch error: ", await res.text());
 		throw new Error("Failed to fetch image");

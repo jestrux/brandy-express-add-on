@@ -21,7 +21,7 @@ import {
 } from "./utils";
 import FontEditorComponent from "./components/FontEditorComponent";
 import Loader from "./components/Loader";
-import useFetch from "./hooks/useFetch";
+import useFetch, { MEDIA_BASE_URL } from "./hooks/useFetch";
 import useLocalStorageState from "./hooks/useLocalStorageState";
 import AddAsset from "./AddAsset";
 import AddBrand from "./AddBrand";
@@ -33,19 +33,14 @@ function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 
 	useEffect(() => {
 		if (asset.type == "font")
-			loadFont(
-				asset.name,
-				`https://app.brandyhq.com/media/${asset.file}`
-			);
+			loadFont(asset.name, `${MEDIA_BASE_URL}/${asset.file}`);
 	}, []);
 
 	async function handleClick() {
 		if (asset.type == "image") {
 			setLoading(true);
 			try {
-				await addToDocument(
-					`https://app.brandyhq.com/media/${asset.file}`
-				);
+				await addToDocument(`${MEDIA_BASE_URL}/${asset.file}`);
 			} catch (error) {
 				console.log("Add image error: ", error);
 				ToastQueue.negative("Failed to add image");
@@ -77,7 +72,7 @@ function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 				{asset.type == "image" && asset.preview && (
 					<img
 						className="p-2 object-contain object-center w-full h-full"
-						src={`https://app.brandyhq.com/media/${asset.preview}`}
+						src={`${MEDIA_BASE_URL}/${asset.preview}`}
 						alt=""
 						style={{
 							minWidth: 0,

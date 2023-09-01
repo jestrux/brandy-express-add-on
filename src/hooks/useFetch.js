@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getValueFromLocalStorage } from "./useLocalStorageState";
 
 export const BASE_URL = "https://api.brandyhq.com";
+export const MEDIA_BASE_URL = "https://api.brandyhq.com/media";
 
 export default function useFetch() {
 	const [loading, setLoading] = useState(false);
