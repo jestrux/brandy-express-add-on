@@ -1,11 +1,15 @@
-export const addToDocument = async (url) => {
+export const fetchImageFromUrl = async (url) => {
 	const res = await fetch(url);
 	if (!res.ok) {
 		console.log("Image fetch error: ", await res.text());
 		throw new Error("Failed to fetch image");
 	}
 
-	const blob = await res.blob();
+	return await res.blob();
+};
+
+export const addToDocument = async (url) => {
+	const blob = await fetchImageFromUrl(url);
 	return window.AddOnSdk?.app.document.addImage(blob);
 };
 

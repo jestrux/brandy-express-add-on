@@ -15,9 +15,9 @@ import {
 import { ToastQueue } from "@react-spectrum/toast";
 import {
 	addToDocument,
-	camelCaseToSentenceCase,
 	loadFont,
 	copyTextToClipboard,
+	fetchImageFromUrl,
 } from "./utils";
 import FontEditorComponent from "./components/FontEditorComponent";
 import Loader from "./components/Loader";
@@ -35,6 +35,20 @@ function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 		if (asset.type == "font")
 			loadFont(asset.name, `${MEDIA_BASE_URL}/${asset.file}`);
 	}, []);
+
+	function handleImageDrag(event) {
+		window.AddOnSdk.app.enableDragToDocument(event.currentTarget, {
+			previewCallback: (image) => {
+				return new URL(image.src);
+			},
+			completionCallback: async () => {
+				const blob = await fetchImageFromUrl(
+					`${MEDIA_BASE_URL}/${asset.file}`
+				);
+				return [{ blob }];
+			},
+		});
+	}
 
 	async function handleClick() {
 		if (asset.type == "image") {
@@ -80,6 +94,7 @@ function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 							maxHeight: "90%",
 							filter: "drop-shadow(0.5px 0.5px 1px rgba(0, 0, 0, 0.2))",
 						}}
+						onLoad={handleImageDrag}
 					/>
 				)}
 
