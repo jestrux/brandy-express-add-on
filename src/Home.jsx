@@ -27,6 +27,8 @@ import AddAsset from "./AddAsset";
 import AddBrand from "./AddBrand";
 import Upgrade from "./Upgrade";
 import PageTitle from "./components/PageTitle";
+import NoSearchResults from "./components/NoSearchResults";
+import NoAssets from "./components/NoAssets";
 
 function AssetCard({ asset, aspectRatio = "1/0.8", onSelectFont }) {
 	const [loading, setLoading] = useState(false);
@@ -137,6 +139,7 @@ export default function Home({ onLogout = () => {} }) {
 	const [brand, setBrand] = useState(user.organisation?.[0]?._id);
 	const [assets, setAssets] = useState({});
 	const [page, setPage] = useState();
+	const [searchQuery, setSearchQuery] = useState("");
 
 	useEffect(() => {
 		if (!brand) return;
@@ -154,7 +157,8 @@ export default function Home({ onLogout = () => {} }) {
 		saveUser({ ...user, organisation: [...(user.organisation || []), b] });
 	};
 
-	const fetchAssets = (searchQuery) => {
+	const fetchAssets = (searchQuery = "") => {
+		setSearchQuery(searchQuery);
 		setAssets({});
 
 		get(
@@ -343,11 +347,11 @@ export default function Home({ onLogout = () => {} }) {
 										fetchAssets(e.target.value);
 									}
 								}}
-								onChange={(e) =>
-									!e.target.value.length
-										? fetchAssets()
-										: null
-								}
+								value={searchQuery}
+								onChange={(e) => {
+									setSearchQuery(e.target.value);
+									if (!e.target.value.length) fetchAssets();
+								}}
 							/>
 						</div>
 					</div>
@@ -359,14 +363,18 @@ export default function Home({ onLogout = () => {} }) {
 			{brand &&
 				(loading || !Object.keys(assets).length) &&
 				(loading ? (
-					<div className="p-3 flex flex-col gap-2 center-center">
+					<div className="mt-3 p-3 flex flex-col gap-2 center-center">
 						<Loader />
 						<span>Loading assets...</span>
 					</div>
 				) : (
-					<div className="mt-2 p-3 flex flex-col gap-2 center-center">
-						<span>No assets here</span>
-					</div>
+					<>
+						{searchQuery?.length ? (
+							<NoSearchResults onClearSearch={fetchAssets} />
+						) : (
+							<NoAssets onAddAsset={() => setPage("Add Asset")} />
+						)}
+					</>
 				))}
 
 			{Object.entries(assets).map(([group, assets], index) => (

@@ -3,6 +3,7 @@ import Login from "./Login";
 import useLocalStorageState from "./hooks/useLocalStorageState";
 import Home from "./Home";
 import Register from "./Register";
+import ForgotPassword from "./ForgotPassword";
 
 const LandingPage = ({ onLogin = () => {}, onRegister = () => {} }) => {
 	return (
@@ -71,6 +72,16 @@ const App = () => {
 		if (page == "login")
 			return (
 				<Login
+					onGoBack={() => setPage("landing")}
+					onRegister={() => setPage("register")}
+					onForgotPassword={() => setPage("forgot password")}
+					onLogin={saveUser}
+				/>
+			);
+
+		if (page == "forgot password")
+			return (
+				<ForgotPassword
 					onGoBack={() => setPage("landing")}
 					onRegister={() => setPage("register")}
 					onLogin={saveUser}

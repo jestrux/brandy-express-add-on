@@ -69,6 +69,32 @@ input,
 button {
 	margin: 0;
 }
+
+.btn {
+	width: 100%;
+	height: 40px;
+	padding: 0 20px;
+	font-size: 0.88rem;
+	font-weight: 600;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	border-radius: 2000px;
+	letter-spacing: 0.025em;
+	position: relative;
+	/* border: 1px solid #222;
+	background: #222; */
+	border: 1px solid #5258e4;
+	background: #5258e4;
+	color: white;
+	cursor: pointer !important;
+}
+.btn:hover {
+	opacity: 0.85 !important;
+}
+
 .w-1\/3 {
 	width: 33.333%;
 }
@@ -102,29 +128,7 @@ button {
 .hidden {
 	display: none;
 }
-.btn {
-	width: 100%;
-	height: 40px;
-	font-size: 0.88rem;
-	font-weight: 600;
-	overflow: hidden;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	border-radius: 2000px;
-	letter-spacing: 0.025em;
-	position: relative;
-	/* border: 1px solid #222;
-	background: #222; */
-	border: 1px solid #5258e4;
-	background: #5258e4;
-	color: white;
-	cursor: pointer !important;
-}
-.btn:hover {
-	opacity: 0.85 !important;
-}
+
 .button {
 	display: flex;
 	align-items: center;
@@ -212,6 +216,9 @@ button {
 .bg-darker-gray {
 	background: #6a6a6a;
 }
+.underline {
+	text-decoration: underline;
+}
 .text-left {
 	text-align: left;
 }
@@ -224,6 +231,9 @@ button {
 }
 .text-black {
 	color: black;
+}
+.text-dark {
+	color: #222;
 }
 .text-light-gray {
 	color: #f0f0f0;

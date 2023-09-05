@@ -6,8 +6,7 @@ import useFetch from "./hooks/useFetch";
 import AlertBar from "./components/AlertBar";
 import PageTitle from "./components/PageTitle";
 
-export default function Login({
-	onForgotPassword = () => {},
+export default function ForgotPassword({
 	onRegister = () => {},
 	onLogin = () => {},
 	onGoBack = () => {},
@@ -18,14 +17,14 @@ export default function Login({
 	const handleSubmit = async () => {
 		if (!formRef.current.validate()) return;
 
-		const res = await post("/auth/login", data);
+		const res = await post("/auth/forgot-password", data);
 
 		if (!res?.user?._id) {
 			return window.AddOnSdk.app.showModalDialog({
 				variant: "error",
-				title: "Login failed",
+				title: "Email doesn't exist",
 				description:
-					"We weren’t able to complete your login with the information provided. Check that you’ve entered your email and password correctly and try again.",
+					"We couldn't find the email in our details, please check that you entered the correct email and try again",
 				// res.message ||
 				// "Please check your credentials and try again",
 			});
@@ -39,18 +38,19 @@ export default function Login({
 
 	return (
 		<>
-			<PageTitle heading="Login into Brandy" onGoBack={onGoBack} />
+			<PageTitle heading="Forgot password" onGoBack={onGoBack} />
 
-			<img
-				style={{ minHeight: "230px" }}
-				className="w-full mt-2 p-3"
-				src="img/banner.png"
-				alt=""
-			/>
-
-			<div className="px-3" style={{ marginTop: "-0.75rem" }}>
+			<div className="mt-2 px-3">
 				<div className="px-2 flex flex-col gap-2">
-					{error && <AlertBar>Wrong email or passsword</AlertBar>}
+					{error && <AlertBar>Whoops! Something went wrong</AlertBar>}
+
+					<div className="mt-1 leading-loose">
+						<p className="m-0">
+							Enter the email you use for your Brandy account
+							below and we'll send you a code to reset your
+							password.
+						</p>
+					</div>
 
 					<div>
 						<div>
@@ -64,23 +64,11 @@ export default function Login({
 											// className: "mb-2",
 										},
 									},
-									password: {
-										type: "password",
-										meta: {},
-									},
 								}}
 								onChange={setData}
 								data={data}
 							/>
 						</div>
-
-						<button
-							className="mt-2 hoverable bg-transparent border border-transparent font-semibold opacity-65 underline"
-							style={{ marginLeft: "-6px" }}
-							onClick={onForgotPassword}
-						>
-							Forgot password
-						</button>
 
 						<button
 							className="btn"
@@ -90,7 +78,7 @@ export default function Login({
 							}}
 							onClick={handleSubmit}
 						>
-							Login
+							Submit
 							{loading && <Loader fillParent small />}
 						</button>
 
@@ -98,7 +86,6 @@ export default function Login({
 							<span className="opacity-65 text-base">
 								Don't have a Brandy account?
 							</span>
-
 							<button
 								className="hoverable bg-transparent border border-transparent font-medium"
 								onClick={onRegister}
