@@ -11,6 +11,15 @@ export default function Upgrade({ onGoBack = () => {} }) {
 	const { get, loading: refreshing } = useFetch();
 	const { get: refreshStripe } = useFetch();
 
+	const showPopupError = async () => {
+		window.AddOnSdk.app.showModalDialog({
+			variant: "error",
+			title: "Unable to sign in",
+			description:
+				"Your browser blocked the sign-in window. Ensure your browser allows popups for Adobe Express and try to sign in again.",
+		});
+	};
+
 	const showStripeError = async () => {
 		await window.AddOnSdk.app.showModalDialog({
 			variant: "error",
@@ -33,7 +42,16 @@ export default function Upgrade({ onGoBack = () => {} }) {
 				return_url: "https://app.brandyhq.com/users/settings/personal",
 			});
 			setStripeLoading(false);
-			window.open(session.url, "_blank");
+
+			const newWin = window.open(session.url, "_blank");
+
+			if (
+				!newWin ||
+				newWin.closed ||
+				typeof newWin.closed == "undefined"
+			) {
+				showPopupError();
+			}
 		} catch (error) {
 			if (
 				error?.message.indexOf("No such customer") != -1 &&
