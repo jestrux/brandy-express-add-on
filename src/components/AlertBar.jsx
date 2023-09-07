@@ -1,3 +1,5 @@
+import React from "react";
+
 const AlertBar = ({ children }) => {
 	return (
 		<div

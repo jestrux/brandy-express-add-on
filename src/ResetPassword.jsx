@@ -6,9 +6,8 @@ import useFetch from "./hooks/useFetch";
 import AlertBar from "./components/AlertBar";
 import PageTitle from "./components/PageTitle";
 
-export default function ForgotPassword({
-	onRegister = () => {},
-	onResetPassword = () => {},
+export default function ResetPassword({
+	onResendEmail = () => {},
 	onLogin = () => {},
 	onGoBack = () => {},
 }) {
@@ -18,20 +17,20 @@ export default function ForgotPassword({
 	const handleSubmit = async () => {
 		if (!formRef.current.validate()) return;
 
-		const res = await post("/auth/send-reset-password-email", data);
+		const res = await post("/auth/reset-password", data);
 
 		if (res?.message.indexOf("success") == -1) {
 			return window.AddOnSdk.app.showModalDialog({
 				variant: "error",
-				title: "Email doesn't exist",
+				title: "Reset password failed",
 				description:
-					"We couldn't find the email in our details, please check that you entered the correct email and try again",
+					"Please ensure you entered the correct details and try again",
 				// res.message ||
 				// "Please check your credentials and try again",
 			});
 		}
 
-		onResetPassword();
+		onLogin();
 	};
 
 	return (
@@ -44,9 +43,8 @@ export default function ForgotPassword({
 
 					<div className="mt-1 leading-loose">
 						<p className="m-0">
-							Enter the email you use for your Brandy account
-							below and we'll send you a code to reset your
-							password.
+							We sent you a reset password token to your email,
+							please use it in the field below.
 						</p>
 					</div>
 
@@ -55,11 +53,12 @@ export default function ForgotPassword({
 							<ComponentFields
 								ref={formRef}
 								schema={{
-									email: {
+									password: "password",
+									confirmPassword: "password",
+									token: {
 										meta: {
 											placeholder:
-												"E.g. john@example.com",
-											// className: "mb-2",
+												"Token sent to your email",
 										},
 									},
 								}}
@@ -82,13 +81,13 @@ export default function ForgotPassword({
 
 						<div className="pt-2 mt-3 flex flex-col center-center gap-2">
 							<span className="opacity-65 text-base">
-								Don't have a Brandy account?
+								Didn't receive email with token?
 							</span>
 							<button
 								className="hoverable bg-transparent border border-transparent font-medium"
-								onClick={onRegister}
+								onClick={onResendEmail}
 							>
-								Get started
+								Resend email
 							</button>
 						</div>
 					</div>
