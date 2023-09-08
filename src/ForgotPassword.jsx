@@ -9,7 +9,6 @@ import PageTitle from "./components/PageTitle";
 export default function ForgotPassword({
 	onRegister = () => {},
 	onResetPassword = () => {},
-	onLogin = () => {},
 	onGoBack = () => {},
 }) {
 	const formRef = useRef();
@@ -20,7 +19,7 @@ export default function ForgotPassword({
 
 		const res = await post("/auth/send-reset-password-email", data);
 
-		if (res?.message.indexOf("success") == -1) {
+		if (res?.message.indexOf("Success") == -1) {
 			return window.AddOnSdk.app.showModalDialog({
 				variant: "error",
 				title: "Email doesn't exist",

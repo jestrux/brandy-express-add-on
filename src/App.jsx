@@ -86,7 +86,6 @@ const App = () => {
 					onGoBack={() => setPage("landing")}
 					onRegister={() => setPage("register")}
 					onResetPassword={() => setPage("reset password")}
-					onLogin={saveUser}
 				/>
 			);
 
@@ -94,9 +93,8 @@ const App = () => {
 			return (
 				<ResetPassword
 					onGoBack={() => setPage("landing")}
-					onRegister={() => setPage("register")}
 					onResendEmail={() => setPage("forgot password")}
-					onLogin={saveUser}
+					onLogin={() => setPage("login")}
 				/>
 			);
 
