@@ -43,12 +43,12 @@ export default function Login({
 
 			<img
 				style={{ minHeight: "230px" }}
-				className="w-full mt-2 p-3"
+				className="w-full mb-2"
 				src="img/banner.png"
 				alt=""
 			/>
 
-			<div className="px-3" style={{ marginTop: "-0.75rem" }}>
+			<div className="px-3">
 				<div className="px-2 flex flex-col gap-2">
 					{error && <AlertBar>Wrong email or passsword</AlertBar>}
 

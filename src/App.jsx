@@ -11,12 +11,12 @@ const LandingPage = ({ onLogin = () => {}, onRegister = () => {} }) => {
 		<div>
 			<img
 				style={{ minHeight: "230px" }}
-				className="w-full p-3"
+				className="w-full mb-2"
 				src="img/banner.png"
 				alt=""
 			/>
 
-			<div style={{ marginTop: "-0.5rem", padding: "0 1.25rem" }}>
+			<div style={{ padding: "0 1.25rem" }}>
 				<h1 className="leading-1 mb-2 text-xl">
 					Single source of truth for all your brand assets
 				</h1>
