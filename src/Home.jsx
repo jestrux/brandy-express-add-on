@@ -290,7 +290,7 @@ export default function Home({ onLogout = () => {} }) {
 							<ActionButton
 								isDisabled={loading}
 								isQuiet
-								onPress={fetchAssets}
+								onPress={() => fetchAssets()}
 							>
 								<RefreshIcon />
 							</ActionButton>
@@ -370,7 +370,7 @@ export default function Home({ onLogout = () => {} }) {
 				) : (
 					<>
 						{searchQuery?.length ? (
-							<NoSearchResults onClearSearch={fetchAssets} />
+							<NoSearchResults onClearSearch={() => fetchAssets()} />
 						) : (
 							<NoAssets onAddAsset={() => setPage("Add Asset")} />
 						)}

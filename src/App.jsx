@@ -32,6 +32,16 @@ const LandingPage = ({ onLogin = () => {}, onRegister = () => {} }) => {
 						We are the choice styleguide brand management platform
 						for brands and agencies.
 					</p>
+
+					<p>
+						<a
+							href="https://www.brandyhq.com/"
+							target="_blank"
+							className="text-primary underline"
+						>
+							Learn more about Brandy
+						</a>
+					</p>
 				</div>
 			</div>
 
