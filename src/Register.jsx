@@ -70,6 +70,7 @@ export default function Register({
 									},
 									email: {
 										label: "Work email",
+										type: "email",
 										meta: {
 											placeholder:
 												"E.g. john@example.com",
@@ -81,6 +82,7 @@ export default function Register({
 									},
 								}}
 								onChange={setData}
+								onSubmit={handleRegister}
 								data={data}
 							/>
 						</div>

@@ -51,7 +51,7 @@ function FontEditorComponent({ onGoBack = () => {} }) {
 		fontFamily: window.selectedFont || "sans-serif",
 	});
 
-	const handleClick = () => {
+	const handleSubmit = () => {
 		if (!formRef.current.validate()) return;
 
 		addToDocument(new FontEditorDrawer().draw(data));
@@ -123,6 +123,7 @@ function FontEditorComponent({ onGoBack = () => {} }) {
 							},
 						}}
 						onChange={updateField}
+						onSubmit={handleSubmit}
 						data={data}
 					/>
 				</div>
@@ -134,7 +135,7 @@ function FontEditorComponent({ onGoBack = () => {} }) {
 						height: "40px",
 						fontSize: "0.82rem",
 					}}
-					onClick={handleClick}
+					onClick={handleSubmit}
 				>
 					Insert
 				</button>

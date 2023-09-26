@@ -208,6 +208,7 @@ export default function AddAsset({
 										},
 									}}
 									onChange={setData}
+									onSubmit={handleSave}
 									data={data}
 								/>
 							</div>

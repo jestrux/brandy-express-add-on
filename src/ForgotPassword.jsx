@@ -55,6 +55,7 @@ export default function ForgotPassword({
 								ref={formRef}
 								schema={{
 									email: {
+										type: "email",
 										meta: {
 											placeholder:
 												"E.g. john@example.com",
@@ -63,6 +64,7 @@ export default function ForgotPassword({
 									},
 								}}
 								onChange={setData}
+								onSubmit={handleSubmit}
 								data={data}
 							/>
 						</div>

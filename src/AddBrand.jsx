@@ -56,6 +56,7 @@ export default function AddBrand({ onSave = () => {} }) {
 									},
 								}}
 								onChange={setData}
+								onSubmit={handleSave}
 								data={data}
 							/>
 						</div>

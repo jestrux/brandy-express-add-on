@@ -87,6 +87,7 @@ export default function ResetPassword({
 									},
 								}}
 								onChange={setData}
+								onSubmit={handleSubmit}
 								data={data}
 							/>
 						</div>

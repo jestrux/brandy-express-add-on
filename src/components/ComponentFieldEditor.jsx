@@ -4,7 +4,7 @@ import ColorCard from "./ColorCard";
 import Select from "./Select";
 import Toggle from "./Toggle";
 
-const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
+const ComponentFieldEditor = function ({ inset, field = {}, onChange, onSubmit = () => {} }) {
 	const {
 		__id,
 		__data,
@@ -169,6 +169,11 @@ const ComponentFieldEditor = function ({ inset, field = {}, onChange }) {
 							uxp-quiet="true"
 							{...otherMeta}
 							onChange={(e) => handleChange(e.target.value)}
+							onKeyUp={(e) => {
+								if (e.key === "Enter" && !e.metaKey && !e.ctrlKey) {
+									onSubmit();
+								}
+							}}
 						/>
 					)}
 				</React.Fragment>

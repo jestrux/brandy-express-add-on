@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { camelCaseToSentenceCase } from "../utils";
+import { camelCaseToSentenceCase, validateEmail } from "../utils";
 import ComponentFieldEditor from "./ComponentFieldEditor";
 import Toggle from "./Toggle";
 
@@ -302,7 +302,7 @@ function ComponentFieldGroup({ field, data, onChange }) {
 }
 
 const ComponentFields = React.forwardRef(
-	({ schema, data, onChange }, forwardedRef) => {
+	({ schema, data, onChange, onSubmit = () => {} }, forwardedRef) => {
 		const fallbackRef = useRef(null);
 		const ref = forwardedRef || fallbackRef;
 		const [errors, setErrors] = useState();
@@ -310,9 +310,13 @@ const ComponentFields = React.forwardRef(
 		const validate = (fields) => {
 			const errors = {};
 
-			fields.forEach(({ __id, value }) => {
-				if (value == undefined || value.toString().length < 1)
-					errors[__id] = "required";
+			fields.forEach(({ __id, type, value }) => {
+				if (value == undefined || value.toString().trim().length < 1)
+					errors[__id] = "This field is required";
+				else if(type == "email") {
+					const emailError = validateEmail(value);
+					if(emailError) errors[__id] = emailError;
+				}
 			});
 
 			setErrors(errors);
@@ -371,6 +375,7 @@ const ComponentFields = React.forwardRef(
 						>
 							<ComponentFieldEditor
 								field={{ ...field, __data: data }}
+								onSubmit={onSubmit}
 								onChange={onChange}
 							/>
 
@@ -384,7 +389,7 @@ const ComponentFields = React.forwardRef(
 										color: "red",
 									}}
 								>
-									This field is required
+									{errors?.[field.__id]}
 								</p>
 							)}
 

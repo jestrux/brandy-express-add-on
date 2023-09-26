@@ -63,3 +63,13 @@ export async function copyTextToClipboard(text) {
 		});
 	}
 }
+
+export const validateEmail = (value) => {
+	const indexOfAt = value.indexOf("@");
+	if (indexOfAt === -1) return "Email should have an @";
+
+	if (value.indexOf(".") === -1 || value.lastIndexOf(".") < indexOfAt)
+		return "Email should have a . after @";
+
+	return null;
+};

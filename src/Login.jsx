@@ -58,6 +58,7 @@ export default function Login({
 								ref={formRef}
 								schema={{
 									email: {
+										type: "email",
 										meta: {
 											placeholder:
 												"E.g. john@example.com",
@@ -71,6 +72,7 @@ export default function Login({
 								}}
 								onChange={setData}
 								data={data}
+								onSubmit={handleSubmit}
 							/>
 						</div>
 
